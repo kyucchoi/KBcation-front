@@ -31,7 +31,8 @@ const bgColor = computed(() => (props.bgGray ? 'var(--background)' : 'var(--whit
   overflow-x: hidden;
   overflow-y: scroll;
 }
+
 .padded {
-  padding: 0px 5.56%;
+  padding: 0px 5.13%;
 }
 </style>
