@@ -14,17 +14,13 @@ lerna-debug.log*
 dist
 dist-ssr
 *.local
-.vercel
-.netlify
-stats.html
 
 # Testing
 coverage
 /cypress/videos/
 /cypress/screenshots/
-.nyc_output
 
-# Editor directories and files
+# Editor
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -37,14 +33,10 @@ coverage
 # TypeScript
 *.tsbuildinfo
 
-# Cache
-.eslintcache
-.npm
-
 # System
 .DS_Store
 
-# Environment variables
+# Environment
 .env
 .env.local
 .env.*.local
