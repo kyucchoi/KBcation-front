@@ -7,15 +7,15 @@ const props = defineProps({
   },
   paddingX: {
     type: Number,
-    default: 0
+    default: 12
   },
   paddingY: {
     type: Number,
-    default: 0
+    default: 12
   },
   marginBottom: {
     type: Number,
-    default: 16
+    default: 0
   }
 });
 
@@ -37,8 +37,7 @@ const boxStyle = computed(() => ({
   position: relative;
   background-color: var(--white);
   width: 100%;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.04);
   border-radius: 10px;
-  padding: 0;
 }
 </style>
