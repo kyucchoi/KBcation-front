@@ -163,7 +163,6 @@ const handleAnswer = (index: number) => {
   max-width: 560px; /* 600px - 40px */
   margin-top: 0;
   margin-bottom: 20px;
-  font-size: 16px;
 }
 
 .answer-button:disabled {
