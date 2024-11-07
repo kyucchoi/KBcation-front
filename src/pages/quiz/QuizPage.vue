@@ -3,12 +3,14 @@ import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Progress from '@/components/ui/progress/Progress.vue';
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const progress = ref(100); // 100%에서 시작
 const isCorrect = ref(false);
 const isWrong = ref(false);
 const selectedAnswer = ref<number | null>(null);
 const isTimeout = ref(false);
+const router = useRouter();
 
 onMounted(() => {
   // 10초 동안 줄어드는 타이머 (100% -> 0%)
@@ -43,6 +45,10 @@ const handleAnswer = (index: number) => {
       isWrong.value = true;
     }
   }
+};
+
+const handleBackButton = () => {
+  router.push('/');
 };
 </script>
 
@@ -91,7 +97,12 @@ const handleAnswer = (index: number) => {
         김시완은 테츠가 가장 좋아하는 사람입니다.
       </div>
 
-      <Button size="lg" :variant="isCorrect ? 'default' : 'default'" class="next-button">
+      <Button
+        size="lg"
+        :variant="isCorrect ? 'default' : 'default'"
+        class="next-button"
+        @click="handleBackButton"
+      >
         {{ isCorrect ? '2단계 도전하기' : '돌아가기' }}
       </Button>
     </div>

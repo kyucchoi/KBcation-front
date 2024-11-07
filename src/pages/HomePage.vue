@@ -2,6 +2,13 @@
 import ShadowBox from '@/components/ShadowBox.vue';
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const handleQuizButton = () => {
+  router.push('/quiz');
+};
 </script>
 
 <template>
@@ -13,7 +20,9 @@ import Button from '@/components/ui/button/Button.vue';
         <div><i class="fa-regular fa-bell"></i> 오늘의 보상</div>
         <div>5문제 모두 맞히면 1,000P 지급!</div>
       </ShadowBox>
-      <Button variant="whiteYellow" size="lg">도전하고 포인트 받기</Button>
+      <Button variant="whiteYellow" size="lg" @click="handleQuizButton"
+        >도전하고 포인트 받기</Button
+      >
     </div>
 
     <div class="bottom">
