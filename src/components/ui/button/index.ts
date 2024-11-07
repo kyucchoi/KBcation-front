@@ -14,7 +14,10 @@ export const buttonVariants = cva(
         secondary: 'bg-[#fffbeb] text-[#1c1c1c] shadow-sm hover:bg-[#fbbf24]',
 
         // 흰색 배경, 진한 노란색 텍스트
-        white: 'bg-[#fdfdfd] text-[#f59e0c] shadow-sm hover:bg-[#f6f7f6]',
+        whiteYellow: 'bg-[#fdfdfd] text-[#f59e0c] shadow-sm hover:bg-[#f6f7f6]',
+
+        // 흰색 배경, 검정 텍스트
+        whiteBlack: 'bg-[#fdfdfd] text-[#1c1c1c] shadow-sm',
 
         // 비활성화 스타일 (회색)
         disabled: 'bg-[#cdcdcd] text-[#fdfdfd] cursor-not-allowed hover:bg-[#afafaf]'
@@ -22,7 +25,7 @@ export const buttonVariants = cva(
       size: {
         default: 'h-9 px-4 py-2',
         sm: 'h-8 rounded-md px-3 text-xs',
-        lg: 'h-12 rounded-md px-8',
+        lg: 'h-12 rounded-[20px] px-8', // rounded-md를 rounded-[20px]로 변경
         icon: 'h-9 w-9'
       }
     },

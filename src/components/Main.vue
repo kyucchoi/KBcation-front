@@ -27,7 +27,7 @@ const bgColor = computed(() => (props.bgGray ? 'var(--background)' : 'var(--whit
   background-color: var(--background);
   position: absolute;
   width: 100%;
-  height: calc(100% - 76px);
+  height: calc(100%);
   overflow-x: hidden;
   overflow-y: scroll;
 }
