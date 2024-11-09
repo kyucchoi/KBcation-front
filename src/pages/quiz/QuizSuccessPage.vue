@@ -53,7 +53,7 @@ import Button from '@/components/ui/button/Button.vue';
 
 .next-button {
   position: absolute;
-  bottom: 0;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 40px); /* 좌우 여백 20px씩 */

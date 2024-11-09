@@ -73,6 +73,7 @@ const handleBackButton = () => {
       >
         김시완
       </Button>
+
       <Button
         v-for="index in 3"
         :key="index"
@@ -167,7 +168,7 @@ const handleBackButton = () => {
 
 .next-button {
   position: absolute;
-  bottom: 0;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 40px); /* 좌우 여백 20px씩 */
