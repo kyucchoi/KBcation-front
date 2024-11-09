@@ -10,7 +10,7 @@
   max-width: 600px;
   background-color: var(--background);
   /* padding-top: env(safe-area-inset-top); */
-  font-weight: 600;
+  font-weight: 500;
   color: var(--black);
 }
 
