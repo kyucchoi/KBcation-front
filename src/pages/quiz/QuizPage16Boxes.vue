@@ -35,7 +35,6 @@ onMounted(() => {
 
 const handleAnswer = (index: number) => {
   if (!isTimeout.value) {
-    // 시간 초과가 아닐 때만 답안 선택 가능
     selectedAnswer.value = index;
     if (index === 0) {
       isCorrect.value = true;
@@ -47,14 +46,29 @@ const handleAnswer = (index: number) => {
   }
 };
 
-const handleBackButton = () => {
+// 성공 페이지로 이동하는 함수
+const handleSuccessButton = () => {
+  router.push('/quiz/success');
+};
+
+// 메인으로 돌아가는 함수
+const handleGoBack = () => {
   router.push('/');
+};
+
+// 버튼 클릭 핸들러
+const handleButtonClick = () => {
+  if (isCorrect.value) {
+    handleSuccessButton();
+  } else {
+    handleGoBack();
+  }
 };
 </script>
 
 <template>
   <Main :padded="true" :bg-gray="true">
-    <div class="quiz-number">1/5</div>
+    <div class="quiz-number">3/3</div>
     <div class="question">Tetz 반에 존재하는</div>
     <div class="question">사람은?</div>
 
@@ -75,7 +89,7 @@ const handleBackButton = () => {
       </Button>
 
       <Button
-        v-for="index in 3"
+        v-for="index in 15"
         :key="index"
         class="answer-button"
         variant="whiteBlack"
@@ -98,13 +112,8 @@ const handleBackButton = () => {
         김시완은 테츠가 가장 좋아하는 사람입니다.
       </div>
 
-      <Button
-        size="lg"
-        :variant="isCorrect ? 'default' : 'default'"
-        class="next-button"
-        @click="handleBackButton"
-      >
-        {{ isCorrect ? '2단계 도전하기' : '돌아가기' }}
+      <Button size="lg" variant="default" class="next-button" @click="handleButtonClick">
+        {{ isCorrect ? '포인트 받기' : '돌아가기' }}
       </Button>
     </div>
   </Main>
@@ -128,15 +137,15 @@ const handleBackButton = () => {
 
 .answer-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   width: 100%;
   margin-bottom: 24px;
 }
 
 .answer-button {
-  height: 140px;
-  font-size: 20px;
+  height: 80px;
+  font-size: 16px;
 }
 
 .correct {

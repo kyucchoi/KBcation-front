@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const handleQuizButton = () => {
-  router.push('/quiz');
+  router.push('/quiz/counting'); // 경로를 counting 페이지로 변경
 };
 </script>
 

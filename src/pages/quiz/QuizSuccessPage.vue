@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const handleOut = () => {
+  router.push('/');
+};
 </script>
 
 <template>
@@ -15,7 +22,7 @@ import Button from '@/components/ui/button/Button.vue';
       </div>
     </div>
 
-    <Button variant="default" class="next-button" size="lg">나가기</Button>
+    <Button variant="default" class="next-button" size="lg" @click="handleOut">나가기</Button>
   </Main>
 </template>
 
