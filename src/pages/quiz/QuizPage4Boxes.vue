@@ -1,0 +1,200 @@
+<script setup lang="ts">
+import Main from '@/components/Main.vue';
+import Button from '@/components/ui/button/Button.vue';
+import Progress from '@/components/ui/progress/Progress.vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+// 상태 관리를 위한 ref 변수들
+const progress = ref(100); // 진행바 상태 (100%에서 시작)
+const isCorrect = ref(false); // 정답 여부
+const isWrong = ref(false); // 오답 여부
+const selectedAnswer = ref<number | null>(null); // 선택한 답안 번호
+const isTimeout = ref(false); // 시간 초과 여부
+const router = useRouter(); // 라우터 인스턴스
+
+// 컴포넌트 마운트 시 타이머 시작
+onMounted(() => {
+  const duration = 1500;
+  const interval = 100;
+  const step = (interval / duration) * 100;
+
+  const timer = setInterval(() => {
+    if (progress.value > 0) {
+      progress.value -= step;
+    } else {
+      clearInterval(timer);
+      if (selectedAnswer.value === null) {
+        isTimeout.value = true;
+        isWrong.value = true;
+        selectedAnswer.value = -1;
+      }
+    }
+  }, interval);
+});
+
+// 답안 선택 처리 함수
+const handleAnswer = (index: number) => {
+  if (!isTimeout.value) {
+    selectedAnswer.value = index;
+    if (index === 0) {
+      isCorrect.value = true;
+      isWrong.value = false;
+    } else {
+      isCorrect.value = false;
+      isWrong.value = true;
+    }
+  }
+};
+
+// 다음 퀴즈로 이동하는 함수
+const handleNextQuiz = () => {
+  router.push({ path: '/quiz/counting', query: { next: 'quiz9Boxes' } });
+};
+
+// 메인으로 돌아가는 함수
+const handleGoBack = () => {
+  router.push('/');
+};
+</script>
+
+<template>
+  <Main :padded="true" :bg-gray="true">
+    <div class="quiz-number">1/3</div>
+    <div class="question">Tetz 반에 존재하는</div>
+    <div class="question">사람은?</div>
+
+    <Progress v-model="progress" class="timer"> </Progress>
+
+    <div class="answer-grid">
+      <Button
+        class="answer-button"
+        variant="whiteBlack"
+        :class="{
+          correct: isCorrect || (isWrong && selectedAnswer !== 0),
+          selected: selectedAnswer === 0
+        }"
+        @click="handleAnswer(0)"
+        :disabled="selectedAnswer !== null"
+      >
+        김시완
+      </Button>
+
+      <Button
+        v-for="index in 3"
+        :key="index"
+        class="answer-button"
+        variant="whiteBlack"
+        :class="{ selected: selectedAnswer === index }"
+        @click="handleAnswer(index)"
+        :disabled="selectedAnswer !== null"
+      >
+        임시완
+      </Button>
+    </div>
+
+    <div v-if="selectedAnswer !== null" class="result-section">
+      <div class="correct-text">
+        {{
+          isTimeout ? '시간 초과되었습니다...!' : isCorrect ? '정답입니다!' : '정답이 아닙니다...!'
+        }}
+      </div>
+      <div class="explanation">
+        정답 설명:<br />
+        김시완은 테츠가 가장 좋아하는 사람입니다.
+      </div>
+
+      <!-- 조건부 렌더링으로 정답/오답에 따라 다른 버튼 표시 -->
+      <Button
+        size="lg"
+        :variant="isCorrect ? 'default' : 'default'"
+        class="next-button"
+        @click="isCorrect ? handleNextQuiz() : handleGoBack()"
+      >
+        {{ isCorrect ? '2단계 도전하기' : '돌아가기' }}
+      </Button>
+    </div>
+  </Main>
+</template>
+
+<style scoped>
+.quiz-number {
+  margin-top: 36px;
+  margin-bottom: 12px;
+  font-size: 20px;
+}
+
+.question {
+  font-size: 24px;
+}
+
+.timer {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.answer-button {
+  height: 140px;
+  font-size: 20px;
+}
+
+.correct {
+  border: 2px solid var(--css-primary);
+}
+
+.selected {
+  background-color: var(--css-light-yellow);
+  border: 2px solid var(--css-primary);
+}
+
+.result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  padding-bottom: 80px; /* 버튼 높이 + 여유 공간 */
+}
+
+.correct-text {
+  color: var(--dark-gray);
+  font-size: 16px;
+}
+
+.explanation {
+  font-size: 14px;
+  color: var(--dark-gray);
+}
+
+.next-button {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px); /* 좌우 여백 20px씩 */
+  max-width: 560px; /* 600px - 40px */
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.answer-button:disabled {
+  opacity: 1;
+}
+
+@media (min-width: 600px) {
+  .next-button {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    border-radius: 20px;
+  }
+}
+</style>

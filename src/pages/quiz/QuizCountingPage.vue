@@ -1,5 +1,46 @@
 <script setup lang="ts">
 import Main from '@/components/Main.vue';
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+
+const route = useRoute();
+const count = ref(3);
+const router = useRouter();
+
+// 현재 단계에 따라 다음 퀴즈 페이지 결정
+const getNextQuizPage = () => {
+  if (route.query.next === 'quiz9Boxes') {
+    return '/quiz2'; // QuizPage9Boxes로 이동
+  } else if (route.query.next === 'quiz16Boxes') {
+    return '/quiz3'; // QuizPage16Boxes로 이동
+  }
+  return '/quiz1'; // 기본값: QuizPage4Boxes로 이동
+};
+
+onMounted(() => {
+  const timer = setInterval(() => {
+    if (count.value > 1) {
+      count.value--;
+    } else {
+      clearInterval(timer);
+      setTimeout(() => {
+        router.push(getNextQuizPage());
+      }, 0);
+    }
+  }, 1000);
+});
+
+const getRewardText = () => {
+  if (!route.query.next) {
+    return '3단계 모두 성공하고 10,000P 받아요!';
+  }
+  if (route.query.next === 'quiz9Boxes') {
+    return '대단하군요! 조금만 더 힘내세요!';
+  }
+  if (route.query.next === 'quiz16Boxes') {
+    return '멋져요! 마지막까지 화이팅';
+  }
+};
 </script>
 
 <template>
@@ -13,10 +54,12 @@ import Main from '@/components/Main.vue';
           <div class="title">찾아주세요</div>
         </div>
 
-        <div class="reward-text">5단계까지 성공하면 포인트 10,000P</div>
+        <div class="reward-text">
+          {{ getRewardText() }}
+        </div>
 
         <div class="circle-container">
-          <div class="number-text">3</div>
+          <div class="number-text">{{ count }}</div>
         </div>
       </div>
     </div>
@@ -76,5 +119,31 @@ import Main from '@/components/Main.vue';
 .number-text {
   color: var(--white);
   font-size: 40px;
+}
+
+.circle-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: var(--css-dark-yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease; /* 애니메이션 효과 추가 */
+}
+
+.number-text {
+  color: var(--white);
+  font-size: 40px;
+  transition: transform 0.3s ease; /* 애니메이션 효과 추가 */
+}
+
+/* 숫자가 바뀔 때 애니메이션 효과 */
+.circle-container:hover {
+  transform: scale(1.1);
+}
+
+.number-text:hover {
+  transform: scale(1.1);
 }
 </style>
