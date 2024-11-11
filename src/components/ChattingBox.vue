@@ -32,7 +32,6 @@ const props = defineProps({
 });
 
 const boxStyle = computed(() => ({
-  height: props.height ? `${props.height}px` : '76px',
   padding: `${props.paddingY}px ${props.paddingX}px`,
   marginBottom: `${props.marginBottom}px`
 }));

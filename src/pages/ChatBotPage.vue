@@ -13,33 +13,61 @@ interface ChatResult {
   subject: string;
   name: string;
   benefit: string;
-}
-
-interface ChatQuestionResult {
   question: string;
-}
-
-interface ChatExplainResult {
   explain: string;
 }
 
 const result = ref<ChatResult[]>([
-  { subject: '신규고객 우대금리', name: '자유적금', benefit: '3.5% 금리혜택' },
-  { subject: '고양이 고객 우대금리', name: '야옹적금', benefit: '반려묘 우대 0.5%' },
-  { subject: '블라고객 우대금리', name: '급여통장', benefit: '급여이체 시 4.0%' }
-]);
-// 현재 더미데이터 넣은거고 백엔드 데이터 완성되면 수정할 예정
-
-const questionresult = ref<ChatQuestionResult[]>([
-  { question: '신규고객 우대금리 수민k 자유적금' }
-]);
-
-const explainresult = ref<ChatExplainResult[]>([
   {
+    subject: '신규고객 우대금리',
+    name: '자유적금',
+    benefit: '3.5% 금리혜택',
+    question: '신규고객 우대금리 수민k 자유적금',
     explain:
       '신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금'
+  },
+  {
+    subject: '고양이 고객 우대금리',
+    name: '야옹적금',
+    benefit: '반려묘 우대 0.5%',
+    question: '신규고객 우대금리 수민k 자유적금',
+    explain:
+      '신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금2'
+  },
+  {
+    subject: '블라고객 우대금리',
+    name: '급여통장',
+    benefit: '급여이체 시 4.0%',
+    question: '신규고객 우대금리 수민k 자유적금3',
+    explain:
+      '신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금3'
   }
 ]);
+
+const questionResult = ref<string>('');
+const explainResult = ref<string>('');
+
+const isQuestionVisible = ref(false);
+const isExplainVisible = ref(false);
+
+// 보험 상품 클릭 시, 순차적으로 질문과 설명을 보이게 하는 함수
+const handleProductClick = (product: ChatResult) => {
+  // 질문과 설명 초기화
+  questionResult.value = product.question;
+  explainResult.value = product.explain;
+
+  // 순차적으로 표시될 수 있도록 타이머 설정
+  isQuestionVisible.value = false;
+  isExplainVisible.value = false;
+
+  setTimeout(() => {
+    isQuestionVisible.value = true; // 질문 표시
+  }, 500); // 질문은 0.5초 후에 보이게
+
+  setTimeout(() => {
+    isExplainVisible.value = true; // 설명 표시
+  }, 1500); // 설명은 1.5초 후에 보이게 (질문 뒤에 표시)
+};
 
 const fetchChatData = async () => {
   try {
@@ -79,22 +107,15 @@ const goBack = () => {
         :subject="item.subject"
         :name="item.name"
         :benefit="item.benefit"
+        @click="handleProductClick(item)"
       />
-      <div class="pl-[125px] flex-col gap-[10px]">
-        <ChattingQuestionBox
-          v-for="(item, index) in questionresult"
-          :key="index"
-          :question="item.question"
-        />
-      </div>
     </div>
-    <div class="mt-[20px] pr-[10px] flex gap-[10px]">
+    <div v-if="isQuestionVisible" class="pl-[125px] pr-[10px] mt-[20px] flex-col gap-[10px]">
+      <ChattingQuestionBox :question="questionResult" />
+    </div>
+    <div v-if="isExplainVisible" class="mt-[20px] pr-[10px] flex gap-[10px]">
       <div class="w-[48px] h-[40px] rounded-full bg-[#f59e0c] flex items-center"></div>
-      <ChattingExplainBox
-        v-for="(item, index) in explainresult"
-        :key="index"
-        :explain="item.explain"
-      />
+      <ChattingExplainBox :explain="explainResult" />
     </div>
   </Main>
 </template>
