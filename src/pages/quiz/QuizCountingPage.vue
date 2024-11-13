@@ -139,11 +139,11 @@ const getRewardText = () => {
 }
 
 /* 숫자가 바뀔 때 애니메이션 효과 */
-.circle-container:hover {
+/* .circle-container:hover {
   transform: scale(1.1);
-}
+} */
 
-.number-text:hover {
+/* .number-text:hover {
   transform: scale(1.1);
-}
+} */
 </style>
