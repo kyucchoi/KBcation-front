@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import ChattingBox from '@/components/ChattingBox.vue';
 import Main from '@/components/Main.vue';
+import HeadBar from '@/components/HeadBar.vue';
 import ChattingQuestionBox from '@/components/ChattingQuestionBox.vue';
 import ChattingExplainBox from '@/components/ChattingExplainBox.vue';
 
@@ -82,22 +83,13 @@ onMounted(() => {
   // 백엔드 완성되면 쓰면 됩니다
   // fetchChatData();
 });
-
-const goBack = () => {
-  router.push('/');
-};
 </script>
 
 <template>
-  <div class="w-100 h-[42px] mt-11 flex justify-start items-center px-5 gap-2 bg-white">
-    <div class="">
-      <img src="../assets/back.svg" alt="뒤로가기" @click="goBack" />
-    </div>
-    <div class="text-[#000000] text-[20px] font-semibold">챗봇</div>
-  </div>
-  <Main :padded="true" class="chat-gradation">
+  <HeadBar :back-button="true" :bg-gray="true"> 챗봇 </HeadBar>
+  <Main :headbar="true" :padded="true" class="chat-gradation">
     <div class="h-[72px] flex justify-start items-center gap-[10px]">
-      <div class="w-[40px] h-[40px] rounded-full bg-[#f59e0c] flex items-center"></div>
+      <div class="chatbot"><i class="fa-solid fa-comments"></i></div>
       <div class="w-[91px] h-[19px] font-semibold">보험 상품 추천</div>
     </div>
     <div class="pl-[20px] pr-[10px] flex flex-col gap-[10px]">
@@ -123,5 +115,20 @@ const goBack = () => {
 <style scoped>
 .chat-gradation {
   background: linear-gradient(to bottom, #fffbeb, #ffffff);
+}
+
+.chatbot {
+  width: 40px;
+  height: 40px;
+  background-color: var(--css-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatbot i {
+  font-size: 20px;
+  color: var(--white);
 }
 </style>

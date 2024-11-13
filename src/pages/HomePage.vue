@@ -16,7 +16,7 @@ const handleChatBot = () => {
 </script>
 
 <template>
-  <Main :padded="false" :bg-gray="true">
+  <Main :headbar="false" :padded="false" :bg-gray="true">
     <div class="top">
       <div class="user">안녕하세요, 김시완님</div>
       <div class="header-content">
@@ -97,7 +97,7 @@ const handleChatBot = () => {
         </div>
       </div>
 
-      <Button class="button-area" @click="handleChatBot">
+      <Button class="chatbot-button" @click="handleChatBot">
         <i class="fa-solid fa-comments"></i>
       </Button>
     </div>
@@ -231,7 +231,7 @@ const handleChatBot = () => {
   margin-right: 4px;
 }
 
-.button-area {
+.chatbot-button {
   position: absolute;
   bottom: 80px;
   right: 30px;
@@ -245,7 +245,7 @@ const handleChatBot = () => {
   justify-content: center;
 }
 
-.button-area i {
+.chatbot-botton i {
   font-size: 24px; /* 아이콘 크기 키우기 */
 }
 </style>
