@@ -7,158 +7,245 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const handleQuizButton = () => {
-  router.push('/quiz/counting'); // 경로를 counting 페이지로 변경
+  router.push('/quiz/counting');
+};
+
+const handleChatBot = () => {
+  router.push('/chatBot');
 };
 </script>
 
 <template>
   <Main :padded="false" :bg-gray="true">
     <div class="top">
-      <div class="title">금융 퀴즈 챌린지</div>
-      <div class="subtitle">매일 매일 성장하는 금융 습관!</div>
-      <ShadowBox class="notice">
-        <div><i class="fa-regular fa-bell"></i> 오늘의 보상</div>
-        <div>5문제 모두 맞히면 1,000P 지급!</div>
-      </ShadowBox>
-      <Button variant="whiteYellow" size="lg" @click="handleQuizButton"
-        >도전하고 포인트 받기</Button
-      >
+      <div class="user">안녕하세요, 김시완님</div>
+      <div class="header-content">
+        <div>
+          <div class="title">금융 퀴즈 챌린지</div>
+          <div class="subtitle">매일 매일 성장하는 금융 습관!</div>
+        </div>
+        <div class="chance-card">
+          <div class="chance-icon">🎁</div>
+          <div class="chance-text">
+            <div class="chance-label">오늘의 기회</div>
+            <div class="chance-amount">1회</div>
+          </div>
+        </div>
+      </div>
+      <Button variant="whiteYellow" size="lg" class="challenge-button" @click="handleQuizButton">
+        도전하고 포인트 받기
+      </Button>
     </div>
 
-    <div class="bottom">
-      <div class="summary">
-        <ShadowBox class="summary-money"
-          ><div style="font-size: 14px">총 자산</div>
-          <div style="font-size: 16px">10,000원</div></ShadowBox
-        >
-        <ShadowBox class="summary-point"
-          ><div style="font-size: 14px">총 포인트</div>
-          <div style="font-size: 16px">1,000P</div></ShadowBox
-        >
+    <div class="dashboard">
+      <div class="balance-cards">
+        <ShadowBox class="balance-card">
+          <div class="balance-icon">💰</div>
+          <div>
+            <div class="balance-label">총 자산</div>
+            <div class="balance-amount">10,000원</div>
+          </div>
+        </ShadowBox>
+        <ShadowBox class="balance-card">
+          <div class="balance-icon">⭐</div>
+          <div>
+            <div class="balance-label">총 포인트</div>
+            <div class="balance-amount">1,000P</div>
+          </div>
+        </ShadowBox>
       </div>
 
-      <div class="recent-container">
-        <div>최근 소비 내역</div>
-        <ShadowBox>
-          <div class="recent-list">
-            <div class="recent-detail">
+      <div>
+        <h2 class="section-title">최근 소비 내역</h2>
+        <div class="transaction-list">
+          <ShadowBox>
+            <div class="transaction-details">
               <div>대구 김밥 천국</div>
-              <div class="recent-date">
-                <i class="fa-regular fa-calendar"></i> 24년 10월 31일 08:00
+              <div class="amount">3,500원</div>
+            </div>
+            <div class="date-box">
+              <div class="date">
+                <i class="fa-regular fa-calendar"></i>
+                24년 10월 31일 08:00
               </div>
             </div>
-            <div class="recent-money">3,500원</div>
-          </div>
-        </ShadowBox>
-        <ShadowBox>
-          <div class="recent-list">
-            <div class="recent-detail">
+          </ShadowBox>
+          <ShadowBox>
+            <div class="transaction-details">
               <div>대구 김밥 천국</div>
-              <div class="recent-date">
-                <i class="fa-regular fa-calendar"></i> 24년 10월 31일 08:00
+              <div class="amount">3,500원</div>
+            </div>
+            <div class="date-box">
+              <div class="date">
+                <i class="fa-regular fa-calendar"></i>
+                24년 10월 31일 08:00
               </div>
             </div>
-            <div class="recent-money">3,500원</div>
-          </div>
-        </ShadowBox>
-        <ShadowBox>
-          <div class="recent-list">
-            <div class="recent-detail">
+          </ShadowBox>
+          <ShadowBox>
+            <div class="transaction-details">
               <div>대구 김밥 천국</div>
-              <div class="recent-date">
-                <i class="fa-regular fa-calendar"></i> 24년 10월 31일 08:00
+              <div class="amount">3,500원</div>
+            </div>
+            <div class="date-box">
+              <div class="date">
+                <i class="fa-regular fa-calendar"></i>
+                24년 10월 31일 08:00
               </div>
             </div>
-            <div class="recent-money">3,500원</div>
-          </div>
-        </ShadowBox>
+          </ShadowBox>
+        </div>
       </div>
+
+      <Button class="button-area" @click="handleChatBot">
+        <i class="fa-solid fa-comments"></i>
+      </Button>
     </div>
   </Main>
 </template>
 
 <style scoped>
 .top {
-  width: 100%;
-  background-color: var(--css-primary);
-  border-radius: 0 0 16px 16px;
-  padding: 36px 5.13% calc(5.13% + 4px);
+  background: linear-gradient(135deg, var(--css-primary) 30%, #ff7802 100%);
+  border-radius: 0 0 24px 24px;
+  padding: 32px 24px;
+}
+
+.user {
+  font-size: 20px;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.header-content {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 24px;
 }
 
 .title {
-  font-size: 32px;
+  font-size: 28px;
   color: var(--white);
 }
 
 .subtitle {
-  font-size: 16px;
   color: var(--white);
+  margin-top: 8px;
 }
 
-.notice {
+.chance-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 16px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 14px;
-  background-color: var(--css-secondary);
-  color: var(--white);
-}
-
-.bottom {
-  padding: 0 5.13% 40px;
-  margin-top: 20px;
-}
-
-.summary {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-}
-
-.summary-money {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--css-light-yellow);
-  gap: 8px;
-}
-
-.summary-point {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--css-primary);
-  color: var(--white);
-  gap: 8px;
-}
-
-.recent-container {
-  display: flex;
-  flex-direction: column;
-  margin-top: 20px;
+  align-items: center;
   gap: 12px;
 }
 
-.recent-list {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.chance-icon {
+  font-size: 24px;
 }
 
-.recent-detail {
+.chance-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
-.recent-date {
+.chance-label {
+  display: flex;
+  font-size: 12px;
+  color: var(--white);
+}
+
+.chance-amount {
+  display: flex;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.challenge-button {
+  width: 100%;
+}
+
+.dashboard {
+  padding: 24px;
+}
+
+.balance-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.balance-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.balance-icon {
+  font-size: 24px;
+}
+
+.balance-label {
   font-size: 14px;
   color: var(--dark-gray);
 }
 
-.recent-money {
+.balance-amount {
   font-size: 20px;
+  font-weight: 600;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transaction-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.amount {
+  font-weight: 600;
   color: var(--css-dark-yellow);
+}
+
+.date-box {
+  font-size: 14px;
+  color: var(--nav-gray);
+}
+
+.date i {
+  margin-right: 4px;
+}
+
+.button-area {
+  position: absolute;
+  bottom: 80px;
+  right: 30px;
+  transition: transform 0.4s ease;
+  opacity: 0.8;
+  width: 56px; /* 버튼 크기 지정 */
+  height: 56px; /* 버튼 크기 지정 */
+  border-radius: 50%; /* 동그랗게 만들기 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-area i {
+  font-size: 24px; /* 아이콘 크기 키우기 */
 }
 </style>

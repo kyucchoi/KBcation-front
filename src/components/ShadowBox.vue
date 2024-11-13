@@ -7,11 +7,11 @@ const props = defineProps({
   },
   paddingX: {
     type: Number,
-    default: 12
+    default: 20
   },
   paddingY: {
     type: Number,
-    default: 12
+    default: 20
   },
   marginBottom: {
     type: Number,
@@ -35,9 +35,9 @@ const boxStyle = computed(() => ({
 <style scoped>
 .shadow-box {
   position: relative;
-  background-color: var(--white);
+  background-color: white;
   width: 100%;
-  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.04);
-  border-radius: 10px;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
 }
 </style>
