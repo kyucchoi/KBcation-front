@@ -2,6 +2,13 @@
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Progress from '@/components/ui/progress/Progress.vue';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '@/components/ui/dialog';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -12,6 +19,7 @@ const isWrong = ref(false); // 오답 여부
 const selectedAnswer = ref<number | null>(null); // 선택한 답안 번호
 const isTimeout = ref(false); // 시간 초과 여부
 const router = useRouter(); // 라우터 인스턴스
+const showAnswerDialog = ref(false);
 
 // 컴포넌트 마운트 시 타이머 시작
 onMounted(() => {
@@ -28,6 +36,7 @@ onMounted(() => {
         isTimeout.value = true;
         isWrong.value = true;
         selectedAnswer.value = -1;
+        showAnswerDialog.value = true; // 시간 초과시 dialog 표시
       }
     }
   }, interval);
@@ -35,7 +44,7 @@ onMounted(() => {
 
 // 답안 선택 처리 함수
 const handleAnswer = (index: number) => {
-  if (!isTimeout.value) {
+  if (!isTimeout.value && selectedAnswer.value === null) {
     selectedAnswer.value = index;
     if (index === 0) {
       isCorrect.value = true;
@@ -44,6 +53,7 @@ const handleAnswer = (index: number) => {
       isCorrect.value = false;
       isWrong.value = true;
     }
+    showAnswerDialog.value = true; // 모든 경우에 dialog 표시
   }
 };
 
@@ -94,7 +104,7 @@ const handleGoBack = () => {
     </div>
 
     <div v-if="selectedAnswer !== null" class="result-section">
-      <div class="correct-text">
+      <!-- <div class="correct-text">
         {{
           isTimeout ? '시간 초과되었습니다...!' : isCorrect ? '정답입니다!' : '정답이 아닙니다...!'
         }}
@@ -102,7 +112,7 @@ const handleGoBack = () => {
       <div class="explanation">
         정답 설명:<br />
         김시완은 테츠가 가장 좋아하는 사람입니다.
-      </div>
+      </div> -->
 
       <!-- 조건부 렌더링으로 정답/오답에 따라 다른 버튼 표시 -->
       <Button
@@ -111,10 +121,45 @@ const handleGoBack = () => {
         class="next-button"
         @click="isCorrect ? handleNextQuiz() : handleGoBack()"
       >
-        {{ isCorrect ? '2단계 도전하기' : '돌아가기' }}
+        {{ isCorrect ? '2단계 도전하기' : '홈으로 돌아가기' }}
       </Button>
     </div>
   </Main>
+
+  <!-- 정답 설명 Dialog -->
+  <Dialog v-model:open="showAnswerDialog">
+    <DialogContent class="bg-white">
+      <DialogHeader>
+        <DialogTitle class="text-lg font-semibold">
+          {{
+            isTimeout
+              ? '시간 초과되었습니다...!'
+              : isCorrect
+                ? '정답입니다!'
+                : '정답이 아닙니다...!'
+          }}
+        </DialogTitle>
+      </DialogHeader>
+      <div class="grid gap-2 py-4">
+        <div>정답: 김시완</div>
+        <div class="text-sm text-muted-foreground">김시완은 테츠가 가장 좋아하는 사람입니다.</div>
+      </div>
+      <DialogFooter>
+        <!-- 정답일 경우 -->
+        <div v-if="isCorrect" class="w-full">
+          <Button size="lg" variant="default" @click="handleNextQuiz" class="w-full">
+            2단계 도전하기
+          </Button>
+        </div>
+        <!-- 오답이거나 시간 초과일 경우 -->
+        <div v-else class="w-full">
+          <Button size="lg" variant="default" @click="handleGoBack" class="w-full">
+            홈으로 돌아가기
+          </Button>
+        </div>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <style scoped>

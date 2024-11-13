@@ -2,6 +2,13 @@
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Progress from '@/components/ui/progress/Progress.vue';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '@/components/ui/dialog';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -11,11 +18,11 @@ const isWrong = ref(false);
 const selectedAnswer = ref<number | null>(null);
 const isTimeout = ref(false);
 const router = useRouter();
+const showAnswerDialog = ref(false);
 
 onMounted(() => {
-  // 10초 동안 줄어드는 타이머 (100% -> 0%)
-  const duration = 1500; // 1.5초
-  const interval = 100; // 0.1초마다 업데이트
+  const duration = 1500;
+  const interval = 100;
   const step = (interval / duration) * 100;
 
   const timer = setInterval(() => {
@@ -24,17 +31,17 @@ onMounted(() => {
     } else {
       clearInterval(timer);
       if (selectedAnswer.value === null) {
-        // 시간 초과 && 답 선택 안 함
         isTimeout.value = true;
         isWrong.value = true;
-        selectedAnswer.value = -1; // 시간 초과용 특별 값
+        selectedAnswer.value = -1;
+        showAnswerDialog.value = true; // 시간 초과시 dialog 표시
       }
     }
   }, interval);
 });
 
 const handleAnswer = (index: number) => {
-  if (!isTimeout.value) {
+  if (!isTimeout.value && selectedAnswer.value === null) {
     selectedAnswer.value = index;
     if (index === 0) {
       isCorrect.value = true;
@@ -43,6 +50,7 @@ const handleAnswer = (index: number) => {
       isCorrect.value = false;
       isWrong.value = true;
     }
+    showAnswerDialog.value = true; // 모든 경우에 dialog 표시
   }
 };
 
@@ -57,13 +65,13 @@ const handleGoBack = () => {
 };
 
 // 버튼 클릭 핸들러
-const handleButtonClick = () => {
-  if (isCorrect.value) {
-    handleSuccessButton();
-  } else {
-    handleGoBack();
-  }
-};
+// const handleButtonClick = () => {
+//   if (isCorrect.value) {
+//     handleSuccessButton();
+//   } else {
+//     handleGoBack();
+//   }
+// };
 </script>
 
 <template>
@@ -102,7 +110,7 @@ const handleButtonClick = () => {
     </div>
 
     <div v-if="selectedAnswer !== null" class="result-section">
-      <div class="correct-text">
+      <!-- <div class="correct-text">
         {{
           isTimeout ? '시간 초과되었습니다...!' : isCorrect ? '정답입니다!' : '정답이 아닙니다...!'
         }}
@@ -110,13 +118,47 @@ const handleButtonClick = () => {
       <div class="explanation">
         정답 설명:<br />
         김시완은 테츠가 가장 좋아하는 사람입니다.
-      </div>
+      </div> -->
 
       <Button size="lg" variant="default" class="next-button" @click="handleButtonClick">
         {{ isCorrect ? '포인트 받기' : '돌아가기' }}
       </Button>
     </div>
   </Main>
+
+  <Dialog v-model:open="showAnswerDialog">
+    <DialogContent class="bg-white">
+      <DialogHeader>
+        <DialogTitle class="text-lg font-semibold">
+          {{
+            isTimeout
+              ? '시간 초과되었습니다...!'
+              : isCorrect
+                ? '정답입니다!'
+                : '정답이 아닙니다...!'
+          }}
+        </DialogTitle>
+      </DialogHeader>
+      <div class="grid gap-2 py-4">
+        <div>정답: 김시완</div>
+        <div class="text-sm text-muted-foreground">김시완은 테츠가 가장 좋아하는 사람입니다.</div>
+      </div>
+      <DialogFooter>
+        <!-- 정답일 경우 -->
+        <div v-if="isCorrect" class="w-full">
+          <Button size="lg" variant="default" @click="handleSuccessButton" class="w-full">
+            포인트 받기
+          </Button>
+        </div>
+        <!-- 오답이거나 시간 초과일 경우 -->
+        <div v-else class="w-full">
+          <Button size="lg" variant="default" @click="handleGoBack" class="w-full">
+            홈으로 돌아가기
+          </Button>
+        </div>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <style scoped>
