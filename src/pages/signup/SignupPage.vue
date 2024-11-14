@@ -38,44 +38,46 @@ const handleNext = () => {
   <Main :padded="true" :headbar="true">
     <div class="signup-title">회원 정보를 <br />입력해주세요</div>
 
-    <div class="input-box">
-      이름
-      <Input type="text" id="name-input" placeholder="이름을 입력해주세요"></Input>
-    </div>
+    <div class="signup-container">
+      <div class="input-box">
+        이름
+        <Input type="text" id="name-input" placeholder="이름을 입력해주세요"></Input>
+      </div>
 
-    <div class="input-box">
-      성별
-      <Select>
-        <SelectTrigger class="w-[180px]">
-          <SelectValue placeholder="성별을 선택해주세요" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="male"> 남자 </SelectItem>
-            <SelectItem value="female"> 여자 </SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
+      <div class="input-box">
+        성별
+        <Select>
+          <SelectTrigger class="w-[180px]">
+            <SelectValue placeholder="성별을 선택해주세요" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="male"> 남자 </SelectItem>
+              <SelectItem value="female"> 여자 </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
 
-    <div class="input-box">
-      생년월일
-      <Popover>
-        <PopoverTrigger as-child>
-          <Button
-            variant="whiteBlack"
-            :class="
-              cn('w-[350px] justify-start text-left font-normal', !value && 'text-muted-foreground')
-            "
-          >
-            <CalendarIcon class="mr-2 h-4 w-4" />
-            {{ value ? df.format(value.toDate(getLocalTimeZone())) : '생원월일을 선택해주세요' }}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent class="w-auto p-0">
-          <Calendar v-model="value" initial-focus locale="ko" :weekStartsOn="0" />
-        </PopoverContent>
-      </Popover>
+      <div class="input-box">
+        생년월일
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button
+              variant="whiteBlack"
+              :class="
+                cn('w-auto justify-start text-left font-normal', !value && 'text-muted-foreground')
+              "
+            >
+              <CalendarIcon class="mr-2 h-4 w-4" />
+              {{ value ? df.format(value.toDate(getLocalTimeZone())) : '생원월일을 선택해주세요' }}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-auto p-0">
+            <Calendar v-model="value" initial-focus locale="ko" :weekStartsOn="0" />
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
 
     <Button size="lg" class="next-button" @click="handleNext">다음</Button>
@@ -91,7 +93,16 @@ const handleNext = () => {
   font-weight: 600;
   margin-top: 40px;
   margin-bottom: 60px;
-  /* margin-left: 20px; */
+  margin-left: 20px;
+}
+
+.signup-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .input-box {
