@@ -29,7 +29,7 @@ const mainStyle = computed(() => ({
 </script>
 
 <template>
-  <div :class="padded ? 'padded main-frame' : 'main-frame'" :style="mainStyle">
+  <div class="main-frame" :style="mainStyle">
     <slot></slot>
   </div>
 </template>
@@ -43,7 +43,7 @@ const mainStyle = computed(() => ({
   overflow-y: scroll;
 }
 
-.padded {
+/* .padded {
   padding: 0px 5.13%;
-}
+} */
 </style>

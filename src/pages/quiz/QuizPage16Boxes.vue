@@ -65,13 +65,13 @@ const handleGoBack = () => {
 };
 
 // 버튼 클릭 핸들러
-// const handleButtonClick = () => {
-//   if (isCorrect.value) {
-//     handleSuccessButton();
-//   } else {
-//     handleGoBack();
-//   }
-// };
+const handleButtonClick = () => {
+  if (isCorrect.value) {
+    handleSuccessButton();
+  } else {
+    handleGoBack();
+  }
+};
 </script>
 
 <template>

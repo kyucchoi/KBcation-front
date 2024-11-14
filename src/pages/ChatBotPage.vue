@@ -86,7 +86,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <HeadBar :back-button="true" :bg-gray="true"> 챗봇 </HeadBar>
+  <HeadBar :back-button="true" :bg-gray="false"> 챗봇 </HeadBar>
   <Main :headbar="true" :padded="true" class="chat-gradation">
     <div class="h-[72px] flex justify-start items-center gap-[10px]">
       <div class="chatbot"><i class="fa-solid fa-comments"></i></div>
