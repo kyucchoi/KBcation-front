@@ -6,6 +6,9 @@ import ChatBotPage from '@/pages/ChatBotPage.vue';
 import QuizPage9Boxes from '@/pages/quiz/QuizPage9Boxes.vue';
 import QuizPage16Boxes from '@/pages/quiz/QuizPage16Boxes.vue';
 import QuizPage4Boxes from '@/pages/quiz/QuizPage4Boxes.vue';
+import LoginPage from '@/pages/LoginPage.vue';
+import SignupPage from '@/pages/signup/SignupPage.vue';
+import SignupSuccessPage from '@/pages/signup/SignupSuccessPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +17,21 @@ const router = createRouter({
       path: '/',
       name: 'main',
       component: HomePage
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginPage
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignupPage
+    },
+    {
+      path: '/signup/success',
+      name: 'signupSuccess',
+      component: SignupSuccessPage
     },
     {
       path: '/quiz/counting',

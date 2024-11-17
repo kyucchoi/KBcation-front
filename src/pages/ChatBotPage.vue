@@ -1,33 +1,3 @@
-<template>
-  <Main :padded="true" class="chat-gradation">
-    <div class="w-100 h-[42px] mt-11 flex justify-start items-center gap-2 bg-white">
-      <div class="">
-        <img src="../assets/back.svg" alt="뒤로가기" @click="goBack" />
-      </div>
-      <div class="text-[#000000] text-[20px] font-semibold">챗봇</div>
-    </div>
-    <div class="chat-window">
-      <!-- 대화 내용 출력 -->
-      <div class="chat-messages" ref="chatMessages">
-        <div v-for="(message, index) in messages" :key="index">
-          <ChattingBotResponseBox v-if="message.sender === 'bot'" :message="message.message" />
-          <ChattingUserInputBox v-if="message.sender === 'user'" :message="message.message" />
-        </div>
-      </div>
-      <!-- 사용자 입력 박스 -->
-      <form @submit.prevent="handleUserMessage" class="input-box">
-        <input
-          v-model="userInput"
-          type="text"
-          placeholder="질문을 입력하세요..."
-          class="input-field"
-        />
-        <button type="submit" class="send-button">전송</button>
-      </form>
-    </div>
-  </Main>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
@@ -35,6 +5,7 @@ import axios from 'axios';
 import ChattingUserInputBox from '../components/ChattingUserInputBox.vue';
 import ChattingBotResponseBox from '../components/ChattingBotResponseBox.vue';
 import Main from '@/components/Main.vue';
+import HeadBar from '@/components/HeadBar.vue';
 
 const router = useRouter();
 
@@ -93,7 +64,37 @@ const getBotResponse = (userMessage: string) => {
 const goBack = () => {
   router.push('/');
 };
+
+onMounted(() => {
+  // 백엔드 완성되면 쓰면 됩니다
+  // fetchChatData();
+});
 </script>
+
+<template>
+  <HeadBar :back-button="true" :bg-gray="false"> 챗봇 </HeadBar>
+  <Main :headbar="true" :padded="true" class="chat-gradation">
+    <div class="chat-window">
+      <!-- 대화 내용 출력 -->
+      <div class="chat-messages" ref="chatMessages">
+        <div v-for="(message, index) in messages" :key="index">
+          <ChattingBotResponseBox v-if="message.sender === 'bot'" :message="message.message" />
+          <ChattingUserInputBox v-if="message.sender === 'user'" :message="message.message" />
+        </div>
+      </div>
+      <!-- 사용자 입력 박스 -->
+      <form @submit.prevent="handleUserMessage" class="input-box">
+        <input
+          v-model="userInput"
+          type="text"
+          placeholder="질문을 입력하세요..."
+          class="input-field"
+        />
+        <button type="submit" class="send-button">전송</button>
+      </form>
+    </div>
+  </Main>
+</template>
 
 <style scoped>
 .chat-window {
@@ -144,5 +145,20 @@ const goBack = () => {
 
 .chat-gradation {
   background: linear-gradient(to bottom, transparent 86px, #fffbeb 86px, #ffffff);
+}
+
+.chatbot {
+  width: 40px;
+  height: 40px;
+  background-color: var(--css-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatbot i {
+  font-size: 20px;
+  color: var(--white);
 }
 </style>
