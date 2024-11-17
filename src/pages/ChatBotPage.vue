@@ -100,7 +100,7 @@ onMounted(() => {
 .chat-window {
   display: flex;
   flex-direction: column;
-  height: 90%;
+  height: 100%;
   justify-content: space-between;
 }
 
@@ -117,7 +117,7 @@ onMounted(() => {
   display: flex;
   gap: 10px;
   position: sticky;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   margin-top: 20px;
   background: white;
   z-index: 10;
@@ -144,7 +144,7 @@ onMounted(() => {
 }
 
 .chat-gradation {
-  background: linear-gradient(to bottom, transparent 86px, #fffbeb 86px, #ffffff);
+  background: linear-gradient(to bottom, #fffbeb, #ffffff);
 }
 
 .chatbot {
