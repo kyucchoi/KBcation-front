@@ -1,127 +1,148 @@
+<template>
+  <Main :padded="true" class="chat-gradation">
+    <div class="w-100 h-[42px] mt-11 flex justify-start items-center gap-2 bg-white">
+      <div class="">
+        <img src="../assets/back.svg" alt="뒤로가기" @click="goBack" />
+      </div>
+      <div class="text-[#000000] text-[20px] font-semibold">챗봇</div>
+    </div>
+    <div class="chat-window">
+      <!-- 대화 내용 출력 -->
+      <div class="chat-messages" ref="chatMessages">
+        <div v-for="(message, index) in messages" :key="index">
+          <ChattingBotResponseBox v-if="message.sender === 'bot'" :message="message.message" />
+          <ChattingUserInputBox v-if="message.sender === 'user'" :message="message.message" />
+        </div>
+      </div>
+      <!-- 사용자 입력 박스 -->
+      <form @submit.prevent="handleUserMessage" class="input-box">
+        <input
+          v-model="userInput"
+          type="text"
+          placeholder="질문을 입력하세요..."
+          class="input-field"
+        />
+        <button type="submit" class="send-button">전송</button>
+      </form>
+    </div>
+  </Main>
+</template>
+
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import ChattingBox from '@/components/ChattingBox.vue';
+import ChattingUserInputBox from '../components/ChattingUserInputBox.vue';
+import ChattingBotResponseBox from '../components/ChattingBotResponseBox.vue';
 import Main from '@/components/Main.vue';
-import ChattingQuestionBox from '@/components/ChattingQuestionBox.vue';
-import ChattingExplainBox from '@/components/ChattingExplainBox.vue';
 
 const router = useRouter();
 
-interface ChatResult {
-  subject: string;
-  name: string;
-  benefit: string;
-  question: string;
-  explain: string;
+interface ChatMessage {
+  sender: 'user' | 'bot';
+  message: string;
 }
 
-const result = ref<ChatResult[]>([
-  {
-    subject: '신규고객 우대금리',
-    name: '자유적금',
-    benefit: '3.5% 금리혜택',
-    question: '신규고객 우대금리 수민k 자유적금',
-    explain:
-      '신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금'
-  },
-  {
-    subject: '고양이 고객 우대금리',
-    name: '야옹적금',
-    benefit: '반려묘 우대 0.5%',
-    question: '신규고객 우대금리 수민k 자유적금',
-    explain:
-      '신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금2'
-  },
-  {
-    subject: '블라고객 우대금리',
-    name: '급여통장',
-    benefit: '급여이체 시 4.0%',
-    question: '신규고객 우대금리 수민k 자유적금3',
-    explain:
-      '신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금,신규고객 우대금리 수민k 자유적금3'
-  }
-]);
-
-const questionResult = ref<string>('');
-const explainResult = ref<string>('');
-
-const isQuestionVisible = ref(false);
-const isExplainVisible = ref(false);
-
-// 보험 상품 클릭 시, 순차적으로 질문과 설명을 보이게 하는 함수
-const handleProductClick = (product: ChatResult) => {
-  // 질문과 설명 초기화
-  questionResult.value = product.question;
-  explainResult.value = product.explain;
-
-  // 순차적으로 표시될 수 있도록 타이머 설정
-  isQuestionVisible.value = false;
-  isExplainVisible.value = false;
-
-  setTimeout(() => {
-    isQuestionVisible.value = true; // 질문 표시
-  }, 500); // 질문은 0.5초 후에 보이게
-
-  setTimeout(() => {
-    isExplainVisible.value = true; // 설명 표시
-  }, 1500); // 설명은 1.5초 후에 보이게 (질문 뒤에 표시)
+const initialMessage: ChatMessage = {
+  sender: 'bot',
+  message: '저는 챗봇이에요! 무엇을 도와드릴까요?'
 };
 
-const fetchChatData = async () => {
-  try {
-    const response = await axios.get('http://localhost:8080/api/recommand'); //백엔드 api 명세서 완료되면 주소 수정하면됨
-    result.value = response.data;
-  } catch (error) {
-    console.error('Error fetching chat data:', error);
-  }
+const messages = ref<ChatMessage[]>([initialMessage]);
+const userInput = ref<string>('');
+const chatMessages = ref<HTMLElement | null>(null);
+
+// 사용자가 메시지를 입력했을 때 실행되는 함수
+const handleUserMessage = () => {
+  if (userInput.value.trim() === '') return;
+
+  // 사용자 메시지 추가
+  messages.value.push({
+    sender: 'user',
+    message: userInput.value
+  });
+
+  const currentInput = userInput.value;
+  userInput.value = ''; // 입력창 초기화
+
+  // 챗봇 응답 추가
+  setTimeout(() => {
+    const botResponse = getBotResponse(currentInput);
+    messages.value.push({
+      sender: 'bot',
+      message: botResponse
+    });
+
+    // 스크롤 최하단으로 이동
+    nextTick(() => {
+      if (chatMessages.value) {
+        chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
+      }
+    });
+  }, 1000);
 };
 
-onMounted(() => {
-  // 백엔드 완성되면 쓰면 됩니다
-  // fetchChatData();
-});
+// 챗봇 응답 로직
+const getBotResponse = (userMessage: string) => {
+  if (userMessage.includes('카드')) {
+    return '카드 상품에 대해 궁금한가요? 어떤 종류의 카드을 찾고 계신가요?';
+  }
+  return '저는 챗봇이에요! 무엇을 도와드릴까요?';
+};
 
 const goBack = () => {
   router.push('/');
 };
 </script>
 
-<template>
-  <div class="w-100 h-[42px] mt-11 flex justify-start items-center px-5 gap-2 bg-white">
-    <div class="">
-      <img src="../assets/back.svg" alt="뒤로가기" @click="goBack" />
-    </div>
-    <div class="text-[#000000] text-[20px] font-semibold">챗봇</div>
-  </div>
-  <Main :padded="true" class="chat-gradation">
-    <div class="h-[72px] flex justify-start items-center gap-[10px]">
-      <div class="w-[40px] h-[40px] rounded-full bg-[#f59e0c] flex items-center"></div>
-      <div class="w-[91px] h-[19px] font-semibold">보험 상품 추천</div>
-    </div>
-    <div class="pl-[20px] pr-[10px] flex flex-col gap-[10px]">
-      <ChattingBox
-        v-for="(item, index) in result"
-        :key="index"
-        :subject="item.subject"
-        :name="item.name"
-        :benefit="item.benefit"
-        @click="handleProductClick(item)"
-      />
-    </div>
-    <div v-if="isQuestionVisible" class="pl-[125px] pr-[10px] mt-[20px] flex-col gap-[10px]">
-      <ChattingQuestionBox :question="questionResult" />
-    </div>
-    <div v-if="isExplainVisible" class="mt-[20px] pr-[10px] flex gap-[10px]">
-      <div class="w-[48px] h-[40px] rounded-full bg-[#f59e0c] flex items-center"></div>
-      <ChattingExplainBox :explain="explainResult" />
-    </div>
-  </Main>
-</template>
-
 <style scoped>
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 90%;
+  justify-content: space-between;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-top: 20px;
+}
+
+.input-box {
+  display: flex;
+  gap: 10px;
+  position: sticky;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  background: white;
+  z-index: 10;
+}
+
+.input-field {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.send-button {
+  padding: 10px 15px;
+  background-color: #f59e0c;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.send-button:hover {
+  background-color: #e68a00;
+}
+
 .chat-gradation {
-  background: linear-gradient(to bottom, #fffbeb, #ffffff);
+  background: linear-gradient(to bottom, transparent 86px, #fffbeb 86px, #ffffff);
 }
 </style>
