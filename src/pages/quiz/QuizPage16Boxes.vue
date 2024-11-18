@@ -178,7 +178,7 @@ const handleButtonClick = () => {
         {{ isCorrect ? '포인트 받기' : '돌아가기' }}
       </Button>
 
-      <Button size="lg" variant="disabled" @click="showAnswerDialog = true">
+      <Button size="sm" variant="disabled" @click="showAnswerDialog = true">
         설명 다시 보기
       </Button>
     </div>
