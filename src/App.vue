@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import NavBar from './components/NavBar.vue';
+import PullToRefresh from './components/PullToRefresh.vue';
 </script>
 
 <template>
-  <RouterView />
-  <!-- <NavBar /> -->
+  <PullToRefresh>
+    <RouterView />
+  </PullToRefresh>
 </template>
 
 <style scoped></style>
