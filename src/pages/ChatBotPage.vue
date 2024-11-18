@@ -61,10 +61,6 @@ const getBotResponse = (userMessage: string) => {
   return '저는 챗봇이에요! 무엇을 도와드릴까요?';
 };
 
-const goBack = () => {
-  router.push('/');
-};
-
 onMounted(() => {
   // 백엔드 완성되면 쓰면 됩니다
   // fetchChatData();
@@ -124,10 +120,12 @@ onMounted(() => {
 }
 
 .input-field {
+  min-width: 0; /* 이 속성을 추가하여 input이 flex container 내에서 줄어들 수 있게 함 */
   flex: 1;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
+  margin-right: 10px; /* gap 대신 margin으로 변경 */
 }
 
 .send-button {
@@ -137,6 +135,8 @@ onMounted(() => {
   border-radius: 8px;
   color: white;
   cursor: pointer;
+  width: 60px; /* 버튼 너비 고정 */
+  flex-shrink: 0; /* 버튼이 줄어들지 않도록 설정 */
 }
 
 .send-button:hover {

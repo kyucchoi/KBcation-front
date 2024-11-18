@@ -2,6 +2,8 @@
 import HeadBar from '@/components/HeadBar.vue';
 import Main from '@/components/Main.vue';
 import Input from '@/components/ui/input/Input.vue';
+import Button from '@/components/ui/button/Button.vue';
+import CustomCalendar from '@/components/CustomCalendar.vue';
 import {
   Select,
   SelectContent,
@@ -11,8 +13,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/utils/index';
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
@@ -87,7 +87,7 @@ const handleNext = () => {
             </Button>
           </PopoverTrigger>
           <PopoverContent class="w-auto p-0">
-            <Calendar v-model="value" initial-focus locale="ko" :weekStartsOn="0" />
+            <CustomCalendar v-model="value" initial-focus locale="ko" :weekStartsOn="0" />
           </PopoverContent>
         </Popover>
       </div>
