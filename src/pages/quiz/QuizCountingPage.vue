@@ -19,7 +19,7 @@ const getNextQuizPage = () => {
 
 onMounted(() => {
   const timer = setInterval(() => {
-    if (count.value > 1) {
+    if (count.value > 0) {
       count.value--;
     } else {
       clearInterval(timer);
