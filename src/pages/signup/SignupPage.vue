@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/utils/index';
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
 import { Calendar as CalendarIcon } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -25,11 +25,24 @@ const router = useRouter();
 const df = new DateFormatter('ko-KR', {
   dateStyle: 'long'
 });
-
+const userName = ref('');
+const gender = ref('');
 const value = ref<DateValue>();
 
+const isFormValid = computed(
+  () =>
+    // 이름이 비어있지 않음
+    userName.value.trim() !== '' &&
+    // 성별이 선택됨
+    gender.value !== '' &&
+    // 생년월일이 선택됨
+    value.value !== undefined
+);
+
 const handleNext = () => {
-  router.push('/signup/success');
+  if (isFormValid.value) {
+    router.push('/signup/bank');
+  }
 };
 </script>
 
@@ -41,19 +54,19 @@ const handleNext = () => {
     <div class="signup-container">
       <div class="input-box">
         이름
-        <Input type="text" id="name-input" placeholder="이름을 입력해주세요"></Input>
+        <Input type="text" id="name-input" v-model="userName" placeholder="이름을 입력해주세요" />
       </div>
 
       <div class="input-box">
         성별
-        <Select>
+        <Select v-model="gender">
           <SelectTrigger class="w-[180px]">
             <SelectValue placeholder="성별을 선택해주세요" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="male"> 남자 </SelectItem>
-              <SelectItem value="female"> 여자 </SelectItem>
+              <SelectItem value="male">남자</SelectItem>
+              <SelectItem value="female">여자</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -70,7 +83,7 @@ const handleNext = () => {
               "
             >
               <CalendarIcon class="mr-2 h-4 w-4" />
-              {{ value ? df.format(value.toDate(getLocalTimeZone())) : '생원월일을 선택해주세요' }}
+              {{ value ? df.format(value.toDate(getLocalTimeZone())) : '생년월일을 선택해주세요' }}
             </Button>
           </PopoverTrigger>
           <PopoverContent class="w-auto p-0">
@@ -80,7 +93,9 @@ const handleNext = () => {
       </div>
     </div>
 
-    <Button size="lg" class="next-button" @click="handleNext">다음</Button>
+    <Button size="lg" class="next-button" :disabled="!isFormValid" @click="handleNext">
+      다음
+    </Button>
   </Main>
 </template>
 
