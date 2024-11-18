@@ -20,8 +20,45 @@ const isTimeout = ref(false);
 const router = useRouter();
 const showAnswerDialog = ref(false);
 
+interface Answer {
+  text: string;
+  isCorrect: boolean;
+}
+
+// 답안 배열 생성 (9개 버튼)
+const answers = ref<Answer[]>([
+  { text: '김시완', isCorrect: true },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false },
+  { text: '임시완', isCorrect: false }
+]);
+
+// 배열을 랜덤하게 섞는 함수
+const shuffleAnswers = () => {
+  const shuffled = [...answers.value];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  answers.value = shuffled;
+};
+
 onMounted(() => {
-  const duration = 1500;
+  shuffleAnswers();
+
+  const duration = 5000;
   const interval = 100;
   const step = (interval / duration) * 100;
 
@@ -43,7 +80,7 @@ onMounted(() => {
 const handleAnswer = (index: number) => {
   if (!isTimeout.value && selectedAnswer.value === null) {
     selectedAnswer.value = index;
-    if (index === 0) {
+    if (answers.value[index].isCorrect) {
       isCorrect.value = true;
       isWrong.value = false;
     } else {
@@ -82,7 +119,7 @@ const handleButtonClick = () => {
 
     <Progress v-model="progress" class="timer"> </Progress>
 
-    <div class="answer-grid">
+    <!-- <div class="answer-grid">
       <Button
         class="answer-button"
         variant="whiteBlack"
@@ -107,6 +144,23 @@ const handleButtonClick = () => {
       >
         임시완
       </Button>
+    </div> -->
+
+    <div class="answer-grid">
+      <Button
+        v-for="(answer, index) in answers"
+        :key="index"
+        class="answer-button"
+        variant="whiteBlack"
+        :class="{
+          correct: selectedAnswer !== null && answer.isCorrect,
+          selected: selectedAnswer === index
+        }"
+        @click="handleAnswer(index)"
+        :disabled="selectedAnswer !== null"
+      >
+        {{ answer.text }}
+      </Button>
     </div>
 
     <div v-if="selectedAnswer !== null" class="result-section">
@@ -122,6 +176,10 @@ const handleButtonClick = () => {
 
       <Button size="lg" variant="default" class="next-button" @click="handleButtonClick">
         {{ isCorrect ? '포인트 받기' : '돌아가기' }}
+      </Button>
+
+      <Button size="lg" variant="disabled" @click="showAnswerDialog = true">
+        설명 다시 보기
       </Button>
     </div>
   </Main>
@@ -145,17 +203,17 @@ const handleButtonClick = () => {
       </div>
       <DialogFooter>
         <!-- 정답일 경우 -->
-        <div v-if="isCorrect" class="w-full">
+        <!-- <div v-if="isCorrect" class="w-full">
           <Button size="lg" variant="default" @click="handleSuccessButton" class="w-full">
             포인트 받기
           </Button>
-        </div>
+        </div> -->
         <!-- 오답이거나 시간 초과일 경우 -->
-        <div v-else class="w-full">
+        <!-- <div v-else class="w-full">
           <Button size="lg" variant="default" @click="handleGoBack" class="w-full">
             홈으로 돌아가기
           </Button>
-        </div>
+        </div> -->
       </DialogFooter>
     </DialogContent>
   </Dialog>

@@ -40,16 +40,20 @@ const handleChatBot = () => {
     <div class="dashboard">
       <div class="balance-cards">
         <ShadowBox class="balance-card">
-          <div class="balance-icon">💰</div>
           <div>
-            <div class="balance-label">총 자산</div>
+            <div class="balance-title">
+              <div class="balance-icon">💰</div>
+              <div class="balance-label">총 자산</div>
+            </div>
             <div class="balance-amount">10,000원</div>
           </div>
         </ShadowBox>
         <ShadowBox class="balance-card">
-          <div class="balance-icon">⭐</div>
           <div>
-            <div class="balance-label">총 포인트</div>
+            <div class="balance-title">
+              <div class="balance-icon">⭐</div>
+              <div class="balance-label">총 포인트</div>
+            </div>
             <div class="balance-amount">1,000P</div>
           </div>
         </ShadowBox>
@@ -178,10 +182,17 @@ const handleChatBot = () => {
   margin-bottom: 32px;
 }
 
-.balance-card {
+/* .balance-card {
   display: flex;
   align-items: center;
-  gap: 16px;
+} */
+
+.balance-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: right;
+  gap: 8px;
 }
 
 .balance-icon {
@@ -194,8 +205,9 @@ const handleChatBot = () => {
 }
 
 .balance-amount {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
+  text-align: right;
 }
 
 .section-title {
@@ -232,8 +244,8 @@ const handleChatBot = () => {
 }
 
 .chatbot-button {
-  position: absolute;
-  bottom: 80px;
+  position: fixed;
+  bottom: 40px;
   right: 30px;
   transition: transform 0.4s ease;
   opacity: 0.8;
@@ -243,6 +255,7 @@ const handleChatBot = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 100; /* 다른 요소들 위에 표시되도록 z-index 추가 */
 }
 
 .chatbot-botton i {
