@@ -10,7 +10,7 @@ const router = useRouter();
 const themeStore = useThemeStore();
 
 onMounted(() => {
-  themeStore.setThemeColor('var(--css-primary)');
+  themeStore.setThemeColor('#FBBF24');
 });
 
 const handleQuizButton = () => {
