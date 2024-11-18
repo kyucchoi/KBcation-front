@@ -122,7 +122,7 @@ const handleChatBot = () => {
 
 <style scoped>
 .top {
-  background: linear-gradient(165deg, var(--css-primary) 30%, #ff7802 100%);
+  background: linear-gradient(155deg, var(--css-primary) 30%, #ff7802 100%);
   border-radius: 0 0 24px 24px;
   padding: 32px 24px;
 }
