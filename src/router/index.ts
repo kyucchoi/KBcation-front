@@ -9,6 +9,8 @@ import QuizPage4Boxes from '@/pages/quiz/QuizPage4Boxes.vue';
 import LoginPage from '@/pages/LoginPage.vue';
 import SignupPage from '@/pages/signup/SignupPage.vue';
 import SignupSuccessPage from '@/pages/signup/SignupSuccessPage.vue';
+import SignupBankPage from '@/pages/signup/SignupBankPage.vue';
+import SignupBankInfoPage from '@/pages/signup/SignupBankInfoPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +29,16 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: SignupPage
+    },
+    {
+      path: '/signup/bank',
+      name: 'signupBank',
+      component: SignupBankPage
+    },
+    {
+      path: '/signup/bank/info/:bankName/:bankImg',
+      name: 'signupBankInfo',
+      component: SignupBankInfoPage
     },
     {
       path: '/signup/success',
