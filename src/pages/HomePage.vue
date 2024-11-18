@@ -3,8 +3,10 @@ import ShadowBox from '@/components/ShadowBox.vue';
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import { useRouter } from 'vue-router';
+import { useThemeStore } from '@/stores/theme';
 
 const router = useRouter();
+const themeStore = useThemeStore();
 
 const handleQuizButton = () => {
   router.push('/quiz/counting');
