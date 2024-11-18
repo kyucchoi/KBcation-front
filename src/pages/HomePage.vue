@@ -16,7 +16,7 @@ const handleChatBot = () => {
 </script>
 
 <template>
-  <Main :headbar="false" :padded="false" :bg-gray="true">
+  <Main :headbar="false" :padded="false" :bg-gray="true" style="overflow-y: hidden">
     <div class="top">
       <div class="user">안녕하세요, 김시완님</div>
       <div class="header-content">
@@ -35,6 +35,11 @@ const handleChatBot = () => {
       <Button variant="whiteYellow" size="lg" class="challenge-button" @click="handleQuizButton">
         도전하고 포인트 받기
       </Button>
+    </div>
+
+    <div class="flex justify-between">
+      <Button variant="default" @click="$router.push('/login')">로그인</Button>
+      <Button variant="default" @click="$router.push('/signup')">회원가입</Button>
     </div>
 
     <div class="dashboard">
@@ -113,8 +118,6 @@ const handleChatBot = () => {
   background: linear-gradient(135deg, var(--css-primary) 30%, #ff7802 100%);
   border-radius: 0 0 24px 24px;
   padding: 32px 24px;
-  margin-top: -50px; /* 노치 영역만큼 위로 */
-  padding-top: 82px; /* 기존 32px + 노치 높이 */
 }
 
 .user {
