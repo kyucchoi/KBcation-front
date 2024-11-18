@@ -4,9 +4,14 @@ import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import { useRouter } from 'vue-router';
 import { useThemeStore } from '@/stores/theme';
+import { onMounted } from 'vue';
 
 const router = useRouter();
 const themeStore = useThemeStore();
+
+onMounted(() => {
+  themeStore.setThemeColor('var(--css-primary)');
+});
 
 const handleQuizButton = () => {
   router.push('/quiz/counting');
@@ -117,7 +122,7 @@ const handleChatBot = () => {
 
 <style scoped>
 .top {
-  background: linear-gradient(135deg, var(--css-primary) 30%, #ff7802 100%);
+  background: linear-gradient(155deg, var(--css-primary) 30%, #ff7802 100%);
   border-radius: 0 0 24px 24px;
   padding: 32px 24px;
 }
