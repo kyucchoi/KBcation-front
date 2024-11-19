@@ -65,8 +65,8 @@ const handleNext = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="male">남자</SelectItem>
-              <SelectItem value="female">여자</SelectItem>
+              <SelectItem value="male" class="select-item">남자</SelectItem>
+              <SelectItem value="female" class="select-item">여자</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -125,6 +125,13 @@ const handleNext = () => {
   flex-direction: column;
   gap: 8px;
   margin-bottom: 40px;
+}
+
+.select-item {
+  padding-left: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .next-button {
