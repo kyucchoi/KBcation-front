@@ -19,30 +19,30 @@ const bankInfo = computed(() => {
 });
 
 const accountNumber = ref('');
+const accountId = ref('');
 const accountPassword = ref('');
 const allTermsChecked = ref(false);
 const privacyTerms = ref(false);
 const serviceTerms = ref(false);
 const thirdPartyTerms = ref(false);
 
-const handlePasswordInput = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  // 숫자만 입력 가능하도록
-  input.value = input.value.replace(/[^0-9]/g, '');
-  // 4자리로 제한
-  if (input.value.length > 4) {
-    input.value = input.value.slice(0, 4);
-  }
-  accountPassword.value = input.value;
-};
+// const handlePasswordInput = (event: Event) => {
+//   const input = event.target as HTMLInputElement;
+//   // 숫자만 입력 가능하도록
+//   input.value = input.value.replace(/[^0-9]/g, '');
+//   // 4자리로 제한
+//   if (input.value.length > 4) {
+//     input.value = input.value.slice(0, 4);
+//   }
+//   accountPassword.value = input.value;
+// };
 
 // 폼 유효성 검사 - 모든 필드가 입력되었는지 확인
 const isFormValid = computed(
   () =>
-    // 계좌번호가 비어있지 않음
     accountNumber.value.trim() !== '' &&
-    // 계좌 비밀번호가 4자리
-    accountPassword.value.length === 4 &&
+    accountId.value !== '' &&
+    accountPassword.value !== '' &&
     // 모든 필수 약관에 동의
     privacyTerms.value &&
     serviceTerms.value &&
@@ -85,26 +85,35 @@ const handleNextButtonClick = () => {
     <div class="form-container">
       <div class="input-group">
         <div class="input-field">
-          <Label for="bank-id-input">계좌 번호</Label>
+          <Label for="bank-num-input">계좌 번호</Label>
           <Input
             type="text"
             inputmode="numeric"
-            id="bank-id-input"
+            id="bank-num-input"
             v-model="accountNumber"
-            placeholder="계좌번호를 입력해주세요."
+            placeholder="계좌번호를 입력해주세요"
           />
         </div>
 
         <div class="input-field">
-          <Label for="bank-password-input">계좌 비밀번호</Label>
+          <Label for="bank-id-input">아이디</Label>
+          <Input
+            type="text"
+            inputmode="text"
+            id="bank-id-input"
+            v-model="accountId"
+            placeholder="인터넷 뱅킹 아이디를 입력해주세요"
+          />
+        </div>
+
+        <div class="input-field">
+          <Label for="bank-password-input">아이디 비밀번호</Label>
           <Input
             type="password"
-            inputmode="numeric"
+            inputmode="text"
             id="bank-password-input"
             v-model="accountPassword"
-            @input="handlePasswordInput"
-            placeholder="(4자리)"
-            maxlength="4"
+            placeholder="비밀번호를 입력해주세요"
           />
         </div>
       </div>
@@ -186,7 +195,7 @@ const handleNextButtonClick = () => {
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  gap: 28px;
   margin-bottom: 60px;
 }
 
@@ -199,7 +208,7 @@ const handleNextButtonClick = () => {
 .terms-section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .term-item {
