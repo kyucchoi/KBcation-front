@@ -176,7 +176,7 @@ const handleNextButtonClick = () => {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 60px 20px 40px;
+  margin: 40px 20px 40px;
   font-size: 28px;
   font-weight: 600;
 }
