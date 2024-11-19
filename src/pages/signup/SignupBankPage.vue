@@ -35,8 +35,8 @@ const handleNextButtonClick = () => {
 </script>
 
 <template>
-  <HeadBar :back-button="true">회원가입</HeadBar>
-  <Main :padded="true" :headbar="true">
+  <Main :padded="true" :headbar="false">
+    <HeadBar :back-button="true">회원가입</HeadBar>
     <div class="bank-title">계좌 등록을 위해 <br />은행을 선택해주세요</div>
 
     <div class="bank-grid">
@@ -68,7 +68,7 @@ const handleNextButtonClick = () => {
 .bank-title {
   font-size: 24px;
   font-weight: 600;
-  margin: 40px 0 40px 20px;
+  margin: 80px 0 40px 20px;
 }
 
 .bank-grid {

@@ -75,8 +75,8 @@ const handleNextButtonClick = () => {
 </script>
 
 <template>
-  <HeadBar :back-button="true">회원가입</HeadBar>
-  <Main :padded="true" :headbar="true">
+  <Main :padded="true" :headbar="false">
+    <HeadBar :back-button="true">회원가입</HeadBar>
     <div class="bank-header">
       <img :src="bankInfo.bankImg" class="bank-icon" alt="bank logo" />
       <div>{{ bankInfo.bankName }}</div>
@@ -176,7 +176,7 @@ const handleNextButtonClick = () => {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 40px 20px 40px;
+  margin: 80px 20px 40px;
   font-size: 28px;
   font-weight: 600;
 }

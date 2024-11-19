@@ -68,8 +68,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <HeadBar :back-button="true" :bg-gray="false"> 챗봇 </HeadBar>
-  <Main :headbar="true" :padded="true" class="chat-gradation">
+  <Main :headbar="false" :padded="true" class="chat-gradation">
+    <HeadBar :back-button="true" :bg-gray="false"> 챗봇 </HeadBar>
     <div class="chat-window">
       <!-- 대화 내용 출력 -->
       <div class="chat-messages" ref="chatMessages">
@@ -96,8 +96,9 @@ onMounted(() => {
 .chat-window {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 92%;
   justify-content: space-between;
+  margin-top: 60px;
 }
 
 .chat-messages {
