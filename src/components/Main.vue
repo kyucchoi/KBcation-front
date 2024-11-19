@@ -37,10 +37,12 @@ const mainStyle = computed(() => ({
 <style scoped>
 .main-frame {
   background-color: var(--background);
-  position: absolute;
+  position: fixed; /* absolute 대신 fixed 사용 */
   width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
+  overscroll-behavior: none; /* 추가 */
+  touch-action: pan-y pinch-zoom; /* 추가 */
 }
 
 /* .padded {
