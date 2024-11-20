@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { useChatStore } from '../stores/chatStore'; // Pinia store import
 import ChattingUserInputBox from '../components/ChattingUserInputBox.vue';
 import ChattingBotResponseBox from '../components/ChattingBotResponseBox.vue';
 import Main from '@/components/Main.vue';
 import HeadBar from '@/components/HeadBar.vue';
 
 const router = useRouter();
+const chatStore = useChatStore();
 
 interface ChatMessage {
   sender: 'user' | 'bot';
@@ -24,7 +25,7 @@ const userInput = ref<string>('');
 const chatMessages = ref<HTMLElement | null>(null);
 
 // 사용자가 메시지를 입력했을 때 실행되는 함수
-const handleUserMessage = () => {
+const handleUserMessage = async () => {
   if (userInput.value.trim() === '') return;
 
   // 사용자 메시지 추가
@@ -36,33 +37,27 @@ const handleUserMessage = () => {
   const currentInput = userInput.value;
   userInput.value = ''; // 입력창 초기화
 
-  // 챗봇 응답 추가
-  setTimeout(() => {
-    const botResponse = getBotResponse(currentInput);
-    messages.value.push({
-      sender: 'bot',
-      message: botResponse
-    });
+  // 백엔드로 질문을 보내고 응답 받기
+  await chatStore.sendMessageToChatbot(currentInput);
 
-    // 스크롤 최하단으로 이동
-    nextTick(() => {
-      if (chatMessages.value) {
-        chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
-      }
-    });
-  }, 1000);
-};
+  // 챗봇 응답 추가 (응답이 없을 경우 대체 메시지 추가)
+  const botMessage = chatStore.chatData?.answer || '죄송합니다. 챗봇이 응답하지 않았어요.';
+  messages.value.push({
+    sender: 'bot',
+    message: botMessage
+  });
 
-// 챗봇 응답 로직
-const getBotResponse = (userMessage: string) => {
-  if (userMessage.includes('카드')) {
-    return '카드 상품에 대해 궁금한가요? 어떤 종류의 카드을 찾고 계신가요?';
-  }
-  return '저는 챗봇이에요! 무엇을 도와드릴까요?';
+  // 스크롤 최하단으로 이동
+  nextTick(() => {
+    const chatMessagesElement = chatMessages.value;
+    if (chatMessagesElement) {
+      chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+    }
+  });
 };
 
 onMounted(() => {
-  // 백엔드 완성되면 쓰면 됩니다
+  // 백엔드 완성되면 사용 가능
   // fetchChatData();
 });
 </script>
@@ -121,12 +116,12 @@ onMounted(() => {
 }
 
 .input-field {
-  min-width: 0; /* 이 속성을 추가하여 input이 flex container 내에서 줄어들 수 있게 함 */
+  min-width: 0;
   flex: 1;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  margin-right: 10px; /* gap 대신 margin으로 변경 */
+  margin-right: 10px;
 }
 
 .send-button {
@@ -136,8 +131,7 @@ onMounted(() => {
   border-radius: 8px;
   color: white;
   cursor: pointer;
-  width: 60px; /* 버튼 너비 고정 */
-  flex-shrink: 0; /* 버튼이 줄어들지 않도록 설정 */
+  width: 60px;
 }
 
 .send-button:hover {
@@ -146,20 +140,5 @@ onMounted(() => {
 
 .chat-gradation {
   background: linear-gradient(to bottom, #fffbeb, #ffffff);
-}
-
-.chatbot {
-  width: 40px;
-  height: 40px;
-  background-color: var(--css-primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.chatbot i {
-  font-size: 20px;
-  color: var(--white);
 }
 </style>
