@@ -47,8 +47,8 @@ const handleNext = () => {
 </script>
 
 <template>
-  <Main :padded="true" :headbar="false">
-    <HeadBar :back-button="true">회원가입</HeadBar>
+  <HeadBar :back-button="true">회원가입</HeadBar>
+  <Main :padded="true" :headbar="true">
     <div class="signup-title">회원 정보를 <br />입력해주세요</div>
 
     <div class="signup-container">
@@ -106,7 +106,7 @@ const handleNext = () => {
   align-items: center;
   font-size: 24px;
   font-weight: 600;
-  margin-top: 80px;
+  margin-top: 40px;
   margin-bottom: 60px;
   margin-left: 20px;
 }

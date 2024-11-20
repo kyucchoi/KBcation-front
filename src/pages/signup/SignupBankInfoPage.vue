@@ -14,7 +14,8 @@ const route = useRoute();
 const bankInfo = computed(() => {
   return {
     bankName: decodeURIComponent(route.params.bankName as string) || '',
-    bankImg: decodeURIComponent(route.params.bankImg as string) || ''
+    bankImg: decodeURIComponent(route.params.bankImg as string) || '',
+    bankCode: (route.params.bankCode as string) || '' // bankCode 추가
   };
 });
 
@@ -68,6 +69,7 @@ const handleNextButtonClick = () => {
     query: {
       bankName: bankInfo.value.bankName,
       bankImg: bankInfo.value.bankImg,
+      bankCode: bankInfo.value.bankCode, // bankCode 추가
       accountNumber: accountNumber.value
     }
   });
@@ -75,8 +77,8 @@ const handleNextButtonClick = () => {
 </script>
 
 <template>
-  <Main :padded="true" :headbar="false">
-    <HeadBar :back-button="true">회원가입</HeadBar>
+  <HeadBar :back-button="true">회원가입</HeadBar>
+  <Main :padded="true" :headbar="true">
     <div class="bank-header">
       <img :src="bankInfo.bankImg" class="bank-icon" alt="bank logo" />
       <div>{{ bankInfo.bankName }}</div>
@@ -91,7 +93,7 @@ const handleNextButtonClick = () => {
             inputmode="numeric"
             id="bank-num-input"
             v-model="accountNumber"
-            placeholder="계좌번호를 입력해주세요"
+            placeholder="계좌 번호를 -없이 입력해주세요"
           />
         </div>
 
@@ -107,13 +109,13 @@ const handleNextButtonClick = () => {
         </div>
 
         <div class="input-field">
-          <Label for="bank-password-input">아이디 비밀번호</Label>
+          <Label for="bank-password-input">비밀번호</Label>
           <Input
             type="password"
             inputmode="text"
             id="bank-password-input"
             v-model="accountPassword"
-            placeholder="비밀번호를 입력해주세요"
+            placeholder="아이디 비밀번호를 입력해주세요"
           />
         </div>
       </div>
@@ -176,7 +178,7 @@ const handleNextButtonClick = () => {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 80px 20px 40px;
+  margin: 40px 20px 40px;
   font-size: 28px;
   font-weight: 600;
 }
