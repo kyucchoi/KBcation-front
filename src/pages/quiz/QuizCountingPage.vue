@@ -32,7 +32,7 @@ onMounted(() => {
 
 const getRewardText = () => {
   if (!route.query.next) {
-    return '3단계 모두 성공하고 10,000P 받아요!';
+    return '3단계 모두 성공하고 1,000P 받아요!';
   }
   if (route.query.next === 'quiz9Boxes') {
     return '대단하군요! 조금만 더 힘내세요!';

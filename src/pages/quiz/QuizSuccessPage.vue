@@ -2,8 +2,16 @@
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import { useRouter } from 'vue-router';
+import { useChallengeStore } from '@/stores/challengeStore';
+import { onMounted } from 'vue';
 
 const router = useRouter();
+const challengeStore = useChallengeStore();
+
+onMounted(() => {
+  // 포인트 추가
+  challengeStore.addPoints(1000);
+});
 
 const handleOut = () => {
   router.push('/');
@@ -14,10 +22,10 @@ const handleOut = () => {
   <Main :padded="false" :bg-gray="false">
     <div class="success-wrapper">
       <div class="success-container">
-        <div class="point">10,000P</div>
+        <div class="point">1,000P</div>
         <div class="message-container">
           <div class="message">축하해요! 금융 퀴즈</div>
-          <div class="message">10,000P 받았어요</div>
+          <div class="message">1,000P 받았어요</div>
         </div>
       </div>
     </div>

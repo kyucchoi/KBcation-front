@@ -6,18 +6,18 @@ import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 
 const banks = [
-  { name: '국민은행', img: '/images/banks/kb-bank.png' },
-  { name: '신한은행', img: '/images/banks/shinhan-bank.png' },
-  { name: '하나은행', img: '/images/banks/hana-bank.png' },
-  { name: '농협은행', img: '/images/banks/nh-bank.png' },
-  { name: '우리은행', img: '/images/banks/woori-bank.png' },
-  { name: '기업은행', img: '/images/banks/ibk-bank.png' }
+  { name: '국민은행', img: '/images/banks/kb-bank.png', code: '0004' },
+  { name: '신한은행', img: '/images/banks/shinhan-bank.png', code: '0088' },
+  { name: '하나은행', img: '/images/banks/hana-bank.png', code: '0081' },
+  { name: '농협은행', img: '/images/banks/nh-bank.png', code: '0011' },
+  { name: '우리은행', img: '/images/banks/woori-bank.png', code: '0020' },
+  { name: '기업은행', img: '/images/banks/ibk-bank.png', code: '0003' }
 ];
 
 const router = useRouter();
-const selectedBank = ref<{ name: string; img: string } | null>(null);
+const selectedBank = ref<{ name: string; img: string; code: string } | null>(null);
 
-const selectBank = (bank: { name: string; img: string }) => {
+const selectBank = (bank: { name: string; img: string; code: string }) => {
   selectedBank.value = bank;
 };
 
@@ -27,7 +27,8 @@ const handleNextButtonClick = () => {
       name: 'signupBankInfo',
       params: {
         bankName: encodeURIComponent(selectedBank.value.name),
-        bankImg: encodeURIComponent(selectedBank.value.img)
+        bankImg: encodeURIComponent(selectedBank.value.img),
+        bankCode: selectedBank.value.code
       }
     });
   }
@@ -35,8 +36,8 @@ const handleNextButtonClick = () => {
 </script>
 
 <template>
-  <Main :padded="true" :headbar="false">
-    <HeadBar :back-button="true">회원가입</HeadBar>
+  <HeadBar :back-button="true">회원가입</HeadBar>
+  <Main :padded="true" :headbar="true">
     <div class="bank-title">계좌 등록을 위해 <br />은행을 선택해주세요</div>
 
     <div class="bank-grid">
@@ -68,7 +69,7 @@ const handleNextButtonClick = () => {
 .bank-title {
   font-size: 24px;
   font-weight: 600;
-  margin: 80px 0 40px 20px;
+  margin: 40px 0 40px 20px;
 }
 
 .bank-grid {
