@@ -78,11 +78,26 @@ export const useUserStore = defineStore('user', () => {
     }
   };
 
+  const updatePoints = async (points: number) => {
+    try {
+      await axios.post(`${BASE_URL}/api/members/${user.value?.memberId}/point`, {
+        point: points
+      });
+      // 포인트 업데이트 후 사용자 정보 갱신
+      await getUserInfo();
+    } catch (error) {
+      console.error('포인트 업데이트 실패:', error);
+      throw error;
+    }
+  };
+
   return {
     user,
     isLoggedIn,
     login,
     logout,
-    checkAuth
+    checkAuth,
+    getUserInfo,
+    updatePoints
   };
 });

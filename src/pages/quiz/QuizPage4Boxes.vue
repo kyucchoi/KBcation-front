@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useQuizStore } from '@/stores/quizStore';
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Progress from '@/components/ui/progress/Progress.vue';
@@ -9,163 +12,98 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 
-// 상태 관리를 위한 ref 변수들
-const progress = ref(100); // 진행바 상태 (100%에서 시작)
-const isCorrect = ref(false); // 정답 여부
-const isWrong = ref(false); // 오답 여부
-const selectedAnswer = ref<number | null>(null); // 선택한 답안 번호
-const isTimeout = ref(false); // 시간 초과 여부
-const router = useRouter(); // 라우터 인스턴스
+const router = useRouter();
+const quizStore = useQuizStore();
+const progress = ref(100);
+const selectedAnswer = ref<string | null>(null);
+const isTimeout = ref(false);
 const showAnswerDialog = ref(false);
 
-interface Answer {
-  text: string;
-  isCorrect: boolean;
-}
+onMounted(async () => {
+  try {
+    await quizStore.loadGameData();
 
-// 답안 배열 생성
-const answers = ref<Answer[]>([
-  { text: '김시완', isCorrect: true },
-  { text: '임시완', isCorrect: false },
-  { text: '임시완', isCorrect: false },
-  { text: '임시완', isCorrect: false }
-]);
+    const duration = 5000;
+    const interval = 100;
+    const step = (interval / duration) * 100;
 
-// 배열을 랜덤하게 섞는 함수
-const shuffleAnswers = () => {
-  const shuffled = [...answers.value];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  answers.value = shuffled;
-};
-
-// 컴포넌트 마운트 시 타이머 시작
-onMounted(() => {
-  shuffleAnswers();
-
-  const duration = 5000;
-  const interval = 100;
-  const step = (interval / duration) * 100;
-
-  const timer = setInterval(() => {
-    if (progress.value > 0) {
-      progress.value -= step;
-    } else {
-      clearInterval(timer);
-      if (selectedAnswer.value === null) {
-        isTimeout.value = true;
-        isWrong.value = true;
-        selectedAnswer.value = -1;
-        showAnswerDialog.value = true; // 시간 초과시 dialog 표시
+    const timer = setInterval(() => {
+      if (progress.value > 0) {
+        progress.value -= step;
+      } else {
+        clearInterval(timer);
+        if (!selectedAnswer.value) {
+          isTimeout.value = true;
+          handleAnswer('');
+          showAnswerDialog.value = true;
+        }
       }
-    }
-  }, interval);
+    }, interval);
+  } catch (error) {
+    console.error('게임 로드 실패:', error);
+    router.push('/');
+  }
 });
 
-// 답안 선택 처리 함수
-const handleAnswer = (index: number) => {
-  if (!isTimeout.value && selectedAnswer.value === null) {
-    selectedAnswer.value = index;
-    const isAnswerCorrect = answers.value[index].isCorrect;
-
-    if (isAnswerCorrect) {
-      isCorrect.value = true;
-      isWrong.value = false;
-    } else {
-      isCorrect.value = false;
-      isWrong.value = true;
+const handleAnswer = async (answer: string) => {
+  if (!isTimeout.value && !selectedAnswer.value) {
+    selectedAnswer.value = answer;
+    try {
+      const isCorrect = await quizStore.submitAnswer(answer);
+      showAnswerDialog.value = true;
+    } catch (error) {
+      console.error('답안 제출 실패:', error);
+      router.push('/');
     }
-    showAnswerDialog.value = true;
   }
 };
 
-// 다음 퀴즈로 이동하는 함수
 const handleNextQuiz = () => {
-  router.push({ path: '/quiz/counting', query: { next: 'quiz9Boxes' } });
-};
-
-// 메인으로 돌아가는 함수
-const handleGoBack = () => {
-  router.push('/');
+  if (quizStore.currentGame?.correct) {
+    if (quizStore.isQuizCompleted) {
+      router.push('/quiz/success');
+    } else {
+      router.push('/quiz/counting');
+    }
+  } else {
+    router.push('/');
+  }
 };
 </script>
 
 <template>
   <Main :padded="true" :bg-gray="true">
-    <div class="quiz-number">1/3</div>
-    <div class="question">Tetz 반에 존재하는</div>
-    <div class="question">사람은?</div>
+    <div class="quiz-number">{{ quizStore.currentGame?.gameRound }}/3</div>
+    <div class="question">{{ quizStore.currentGame?.quiz }}</div>
 
-    <Progress v-model="progress" class="timer"> </Progress>
-
-    <!-- <div class="answer-grid">
-      <Button
-        class="answer-button"
-        variant="whiteBlack"
-        :class="{
-          correct: isCorrect || (isWrong && selectedAnswer !== 0),
-          selected: selectedAnswer === 0
-        }"
-        @click="handleAnswer(0)"
-        :disabled="selectedAnswer !== null"
-      >
-        김시완
-      </Button>
-
-      <Button
-        v-for="index in 3"
-        :key="index"
-        class="answer-button"
-        variant="whiteBlack"
-        :class="{ selected: selectedAnswer === index }"
-        @click="handleAnswer(index)"
-        :disabled="selectedAnswer !== null"
-      >
-        임시완
-      </Button>
-    </div> -->
+    <Progress v-model="progress" class="timer" />
 
     <div class="answer-grid">
       <Button
-        v-for="(answer, index) in answers"
+        v-for="(option, index) in quizStore.currentGame?.answerOptions"
         :key="index"
         class="answer-button"
         variant="whiteBlack"
         :class="{
-          correct: selectedAnswer !== null && answer.isCorrect,
-          selected: selectedAnswer === index
+          correct: selectedAnswer && option === quizStore.currentGame?.correctAnswer,
+          selected: selectedAnswer === option
         }"
-        @click="handleAnswer(index)"
+        @click="handleAnswer(option)"
         :disabled="selectedAnswer !== null"
       >
-        {{ answer.text }}
+        {{ option }}
       </Button>
     </div>
 
-    <div v-if="selectedAnswer !== null" class="result-section">
-      <!-- <div class="correct-text">
-        {{
-          isTimeout ? '시간 초과되었습니다...!' : isCorrect ? '정답입니다!' : '정답이 아닙니다...!'
-        }}
-      </div>
-      <div class="explanation">
-        정답 설명:<br />
-        김시완은 테츠가 가장 좋아하는 사람입니다.
-      </div> -->
-
-      <!-- 조건부 렌더링으로 정답/오답에 따라 다른 버튼 표시 -->
+    <div v-if="selectedAnswer" class="result-section">
       <Button
         size="lg"
-        :variant="isCorrect ? 'default' : 'default'"
+        :variant="quizStore.currentGame?.correct ? 'default' : 'default'"
         class="next-button"
-        @click="isCorrect ? handleNextQuiz() : handleGoBack()"
+        @click="handleNextQuiz"
       >
-        {{ isCorrect ? '2단계 도전하기' : '홈으로 돌아가기' }}
+        {{ quizStore.currentGame?.correct ? '다음 문제 도전하기' : '홈으로 돌아가기' }}
       </Button>
 
       <Button size="sm" variant="disabled" @click="showAnswerDialog = true">
@@ -174,7 +112,6 @@ const handleGoBack = () => {
     </div>
   </Main>
 
-  <!-- 정답 설명 Dialog -->
   <Dialog v-model:open="showAnswerDialog">
     <DialogContent class="bg-white">
       <DialogHeader>
@@ -182,30 +119,18 @@ const handleGoBack = () => {
           {{
             isTimeout
               ? '시간 초과되었습니다...!'
-              : isCorrect
+              : quizStore.currentGame?.correct
                 ? '정답입니다!'
                 : '정답이 아닙니다...!'
           }}
         </DialogTitle>
       </DialogHeader>
       <div class="grid gap-2 py-4">
-        <div>정답: 김시완</div>
-        <div class="text-sm text-muted-foreground">김시완은 테츠가 가장 좋아하는 사람입니다.</div>
+        <div>정답: {{ quizStore.currentGame?.correctAnswer }}</div>
+        <div class="text-sm text-muted-foreground">
+          {{ quizStore.currentGame?.answerExplanation }}
+        </div>
       </div>
-      <DialogFooter>
-        <!-- 정답일 경우 -->
-        <!-- <div v-if="isCorrect" class="w-full">
-          <Button size="lg" variant="default" @click="handleNextQuiz" class="w-full">
-            2단계 도전하기
-          </Button>
-        </div> -->
-        <!-- 오답이거나 시간 초과일 경우 -->
-        <!-- <div v-else class="w-full">
-          <Button size="lg" variant="default" @click="handleGoBack" class="w-full">
-            홈으로 돌아가기
-          </Button>
-        </div> -->
-      </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>
