@@ -1,21 +1,36 @@
 <script setup lang="ts">
 import Main from '@/components/Main.vue';
+import { useQuizStore } from '@/stores/quizStore';
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
 const route = useRoute();
 const count = ref(3);
 const router = useRouter();
+const quizStore = useQuizStore();
 
 // 현재 단계에 따라 다음 퀴즈 페이지 결정
-const getNextQuizPage = () => {
-  if (route.query.next === 'quiz9Boxes') {
-    return '/quiz2'; // QuizPage9Boxes로 이동
-  } else if (route.query.next === 'quiz16Boxes') {
-    return '/quiz3'; // QuizPage16Boxes로 이동
-  }
-  return '/quiz1'; // 기본값: QuizPage4Boxes로 이동
-};
+// const getNextQuizPage = () => {
+//   if (route.query.next === 'quiz9Boxes') {
+//     return '/quiz2'; // QuizPage9Boxes로 이동
+//   } else if (route.query.next === 'quiz16Boxes') {
+//     return '/quiz3'; // QuizPage16Boxes로 이동
+//   }
+//   return '/quiz1'; // 기본값: QuizPage4Boxes로 이동
+// };
+
+// onMounted(() => {
+//   const timer = setInterval(() => {
+//     if (count.value > 0) {
+//       count.value--;
+//     } else {
+//       clearInterval(timer);
+//       setTimeout(() => {
+//         router.push(getNextQuizPage());
+//       }, 0);
+//     }
+//   }, 1000);
+// });
 
 onMounted(() => {
   const timer = setInterval(() => {
@@ -24,21 +39,34 @@ onMounted(() => {
     } else {
       clearInterval(timer);
       setTimeout(() => {
-        router.push(getNextQuizPage());
+        router.push('/quiz/4boxes');
       }, 0);
     }
   }, 1000);
 });
 
+// const getRewardText = () => {
+//   if (!route.query.next) {
+//     return '3단계 모두 성공하고 1,000P 받아요!';
+//   }
+//   if (route.query.next === 'quiz9Boxes') {
+//     return '대단하군요! 조금만 더 힘내세요!';
+//   }
+//   if (route.query.next === 'quiz16Boxes') {
+//     return '멋져요! 마지막까지 화이팅';
+//   }
+// };
+
 const getRewardText = () => {
-  if (!route.query.next) {
-    return '3단계 모두 성공하고 1,000P 받아요!';
-  }
-  if (route.query.next === 'quiz9Boxes') {
-    return '대단하군요! 조금만 더 힘내세요!';
-  }
-  if (route.query.next === 'quiz16Boxes') {
-    return '멋져요! 마지막까지 화이팅';
+  switch (quizStore.successCount) {
+    case 0:
+      return '3단계 모두 성공하고 1,000P 받아요!';
+    case 1:
+      return '대단하군요! 조금만 더 힘내세요!';
+    case 2:
+      return '멋져요! 마지막까지 화이팅';
+    default:
+      return '3단계 모두 성공하고 1,000P 받아요!';
   }
 };
 </script>

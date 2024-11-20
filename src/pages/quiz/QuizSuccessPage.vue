@@ -13,8 +13,14 @@ onMounted(() => {
   challengeStore.addPoints(1000);
 });
 
-const handleOut = () => {
-  router.push('/');
+const handleOut = async () => {
+  try {
+    await challengeStore.addPoints(1000);
+    router.push('/');
+  } catch (error) {
+    console.error('포인트 추가 실패:', error);
+    router.push('/');
+  }
 };
 </script>
 

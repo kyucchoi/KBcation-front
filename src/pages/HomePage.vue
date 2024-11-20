@@ -7,6 +7,7 @@ import { useThemeStore } from '@/stores/theme';
 import { onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { useChallengeStore } from '@/stores/challengeStore';
+import TransactionList from '@/components/TransactionList.vue';
 
 const router = useRouter();
 const themeStore = useThemeStore();
@@ -20,9 +21,24 @@ const handleLogout = () => {
   router.push('/login'); // 로그인 페이지로 이동
 };
 
-onMounted(() => {
+onMounted(async () => {
   themeStore.setThemeColor('#FBBF24');
-  challengeStore.initialize(); // 기회 초기화 체크
+  challengeStore.initialize();
+
+  // 로그인 상태 체크 추가
+  userStore.checkAuth();
+
+  // 사용자 정보 조회
+  if (userStore.isLoggedIn) {
+    try {
+      const userInfo = await userStore.getUserInfo();
+    } catch (error) {
+      console.error('사용자 정보 조회 실패:', error);
+    }
+  } else {
+    // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+    router.push('/login');
+  }
 });
 
 const handleQuizButton = () => {
@@ -43,7 +59,7 @@ const handleChatBot = () => {
   <Main :headbar="false" :padded="false" :bg-gray="true">
     <div class="top">
       <div class="user">
-        안녕하세요, 김시완님
+        안녕하세요, {{ userStore.user?.fullName }}님
         <div>
           <i class="fa-solid fa-right-from-bracket" @click="handleLogout"></i>
         </div>
@@ -68,10 +84,10 @@ const handleChatBot = () => {
     </div>
 
     <div class="content">
-      <div class="flex justify-between p-4">
+      <!-- <div class="flex justify-between p-4">
         <Button variant="default" @click="$router.push('/login')">로그인</Button>
         <Button variant="default" @click="$router.push('/signup')">회원가입</Button>
-      </div>
+      </div> -->
 
       <div class="dashboard">
         <div class="balance-cards">
@@ -90,14 +106,16 @@ const handleChatBot = () => {
                 <div class="balance-icon">⭐</div>
                 <div class="balance-label">총 포인트</div>
               </div>
-              <div class="balance-amount">1,000P</div>
+              <div class="balance-amount">{{ userStore.user?.point }}P</div>
             </div>
           </ShadowBox>
         </div>
 
         <div>
           <h2 class="section-title">최근 소비 내역</h2>
-          <div class="transaction-scroll">
+          <TransactionList />
+
+          <!-- <div class="transaction-scroll">
             <div class="transaction-list">
               <ShadowBox>
                 <div class="transaction-details">
@@ -135,20 +153,8 @@ const handleChatBot = () => {
                   </div>
                 </div>
               </ShadowBox>
-              <ShadowBox>
-                <div class="transaction-details">
-                  <div>대구 김밥 천국</div>
-                  <div class="amount">3,500원</div>
-                </div>
-                <div class="date-box">
-                  <div class="date">
-                    <i class="fa-regular fa-calendar"></i>
-                    24년 10월 31일 08:00
-                  </div>
-                </div>
-              </ShadowBox>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -273,7 +279,7 @@ const handleChatBot = () => {
 }
 
 .transaction-scroll {
-  height: 300px;
+  height: 360px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }

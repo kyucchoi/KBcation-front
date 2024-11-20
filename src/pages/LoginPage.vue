@@ -2,6 +2,7 @@
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
+import { Label } from '@/components/ui/label';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
