@@ -56,13 +56,13 @@ const handleAnswer = async (answer: string) => {
 };
 
 const handleNextQuiz = async () => {
-  // 오답이거나 시간초과면 홈으로
   if (!quizStore.currentGame?.correct || isTimeout.value) {
+    quizStore.resetRound(); // 홈으로 돌아갈 때 라운드 초기화
     router.push('/');
     return;
   }
 
-  if (quizStore.isQuizCompleted) {
+  if (quizStore.currentRound === 3) {
     router.push('/quiz/success');
   } else {
     try {
@@ -70,6 +70,7 @@ const handleNextQuiz = async () => {
       router.push('/quiz/counting');
     } catch (error) {
       console.error('다음 게임 로드 실패:', error);
+      quizStore.resetRound();
       router.push('/');
     }
   }
@@ -84,7 +85,7 @@ const handleNextQuiz = async () => {
     </div>
 
     <template v-else>
-      <div class="quiz-number">{{ quizStore.currentGame?.gameRound }}/3</div>
+      <div class="quiz-number">{{ quizStore.currentRound }}/3</div>
       <div class="question">{{ quizStore.currentGame?.quiz }}</div>
 
       <Progress v-model="progress" class="timer" />

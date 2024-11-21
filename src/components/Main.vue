@@ -22,9 +22,9 @@ themeStore.setThemeColor(`${props.bgGray ? '#F6F7F6' : '#FDFDFD'}`);
 
 const mainStyle = computed(() => ({
   backgroundColor: props.bgGray ? 'var(--background)' : 'var(--white)',
-  marginTop: props.headbar ? '52px' : '0', // headbar가 true일 때 상단 여백 추가
+  marginTop: props.headbar ? '52px' : '0',
   padding: props.padded ? '0 5.13%' : '0',
-  height: props.headbar ? 'calc(100% - 52px)' : '100%' // headbar가 true일 때 높이 조정
+  height: props.headbar ? 'calc(100% - 52px)' : '100%'
 }));
 </script>
 
@@ -37,12 +37,12 @@ const mainStyle = computed(() => ({
 <style scoped>
 .main-frame {
   background-color: var(--background);
-  position: fixed; /* absolute 대신 fixed 사용 */
+  position: fixed;
   width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
-  overscroll-behavior: none; /* 추가 */
-  touch-action: pan-y pinch-zoom; /* 추가 */
+  overscroll-behavior: none;
+  touch-action: pan-y pinch-zoom;
 }
 
 /* .padded {

@@ -2,23 +2,37 @@
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import { useRouter } from 'vue-router';
-import { useChallengeStore } from '@/stores/challengeStore';
+import { useUserStore } from '@/stores/userStore';
 import { onMounted } from 'vue';
+import { useQuizStore } from '@/stores/quizStore';
 
 const router = useRouter();
-const challengeStore = useChallengeStore();
+const userStore = useUserStore();
+const quizStore = useQuizStore();
+const QUIZ_REWARD = 1000;
 
-onMounted(() => {
-  // 포인트 추가
-  challengeStore.addPoints(1000);
+onMounted(async () => {
+  try {
+    await userStore.getUserInfo();
+
+    if (userStore.user && typeof userStore.user.point === 'number') {
+      const totalPoint = userStore.user.point + QUIZ_REWARD;
+      await userStore.updatePoints(totalPoint);
+    } else {
+      console.error('사용자 정보를 찾을 수 없습니다.');
+    }
+  } catch (error) {
+    console.error('포인트 업데이트 실패:', error);
+  }
 });
 
 const handleOut = async () => {
   try {
-    await challengeStore.addPoints(1000);
+    await userStore.getUserInfo();
+    quizStore.resetRound();
     router.push('/');
   } catch (error) {
-    console.error('포인트 추가 실패:', error);
+    console.error('사용자 정보 갱신 실패:', error);
     router.push('/');
   }
 };
