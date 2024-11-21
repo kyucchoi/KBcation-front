@@ -12,7 +12,6 @@ import { useTransactionStore } from '@/stores/transactionStore';
 
 const router = useRouter();
 const themeStore = useThemeStore();
-
 const userStore = useUserStore();
 const challengeStore = useChallengeStore();
 const transactionStore = useTransactionStore();
@@ -25,18 +24,14 @@ const handleLogout = () => {
 onMounted(async () => {
   themeStore.setThemeColor('#FBBF24');
   challengeStore.initialize();
-
-  // 로그인 상태 체크 추가
   userStore.checkAuth();
 
-  // 사용자 정보 조회
   if (userStore.isLoggedIn) {
     try {
       await userStore.getUserInfo();
-
-      // 거래내역도 함께 로드
       if (userStore.user?.memberId) {
         await transactionStore.getTransactions(userStore.user.memberId);
+        await transactionStore.getLatestBalance(userStore.user.memberId);
       }
     } catch (error) {
       console.error('사용자 정보 조회 실패:', error);
@@ -49,7 +44,7 @@ onMounted(async () => {
 const handleRefreshTransactions = async () => {
   try {
     if (userStore.user?.memberId) {
-      await transactionStore.updateTransactions(userStore.user.memberId, {});
+      await transactionStore.getLatestBalance(userStore.user.memberId);
     }
   } catch (error) {
     console.error('거래내역 새로고침 실패:', error);
@@ -111,7 +106,9 @@ const handleChatBot = () => {
                 <div class="balance-icon">💰</div>
                 <div class="balance-label">총 자산</div>
               </div>
-              <div class="balance-amount">10,000원</div>
+              <div class="balance-amount">
+                {{ transactionStore.latestBalance?.toLocaleString() }}원
+              </div>
             </div>
           </ShadowBox>
           <ShadowBox class="balance-card">
