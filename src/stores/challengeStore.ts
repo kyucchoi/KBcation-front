@@ -8,15 +8,18 @@ export const useChallengeStore = defineStore('challenge', () => {
   const remainingChances = ref(maxChances);
 
   const checkAndResetChances = () => {
-    const lastResetDate = localStorage.getItem('lastResetDate');
+    const memberId = userStore.user?.memberId;
+    if (!memberId) return;
+
+    const lastResetDate = localStorage.getItem(`lastResetDate_${memberId}`);
     const today = new Date().toDateString();
 
     if (lastResetDate !== today) {
       remainingChances.value = maxChances;
-      localStorage.setItem('lastResetDate', today);
-      localStorage.setItem('remainingChances', String(maxChances));
+      localStorage.setItem(`lastResetDate_${memberId}`, today);
+      localStorage.setItem(`remainingChances_${memberId}`, String(maxChances));
     } else {
-      const savedChances = localStorage.getItem('remainingChances');
+      const savedChances = localStorage.getItem(`remainingChances_${memberId}`);
       if (savedChances) {
         remainingChances.value = parseInt(savedChances);
       }
@@ -24,9 +27,12 @@ export const useChallengeStore = defineStore('challenge', () => {
   };
 
   const useChance = () => {
+    const memberId = userStore.user?.memberId;
+    if (!memberId) return false;
+
     if (remainingChances.value > 0) {
       remainingChances.value--;
-      localStorage.setItem('remainingChances', String(remainingChances.value));
+      localStorage.setItem(`remainingChances_${memberId}`, String(remainingChances.value));
       return true;
     }
     return false;
