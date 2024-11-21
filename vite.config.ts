@@ -11,6 +11,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  build: {
+    assetsInlineLimit: 10000 // 이미지 크기 제한 설정 (10KB 이하)
+  },
   css: {
     postcss: {
       plugins: [tailwindcss(), autoprefixer()]
