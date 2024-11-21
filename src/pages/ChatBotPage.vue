@@ -26,9 +26,19 @@ const messages = ref<ChatMessage[]>([initialMessage]);
 const userInput = ref<string>('');
 const chatMessages = ref<HTMLElement | null>(null);
 const isLoading = ref<boolean>(false); // 로딩 상태 변수 추가
-const loadingText = ref<string>('로딩중입니다'); // 로딩 텍스트 변수
+const loadingText = ref<string>('답변을 생성중입니다'); // 로딩 텍스트 변수
 
 let loadingInterval: ReturnType<typeof setInterval> | null = null; // interval 변수 선언
+let toggleTextInterval: ReturnType<typeof setInterval> | null = null; // 텍스트를 번갈아 표시하는 interval 변수
+
+// 로딩 문구 리스트
+const loadingMessages = [
+  '답변을 생성중입니다',
+  '고객님의 소비내역을 분석하여 <br> 카드상품 추천중입니다'
+];
+
+// 현재 표시되는 문구의 인덱스
+let currentMessageIndex = 0;
 
 // 사용자가 메시지를 입력했을 때 실행되는 함수
 const handleUserMessage = async () => {
@@ -73,9 +83,16 @@ const handleUserMessage = async () => {
 // 로딩 텍스트를 주기적으로 업데이트하는 함수
 const startLoadingText = () => {
   let dotCount = 0;
+
+  // 로딩 문구를 번갈아가며 표시
+  toggleTextInterval = setInterval(() => {
+    currentMessageIndex = (currentMessageIndex + 1) % loadingMessages.length; // 번갈아가며 텍스트 변경
+    loadingText.value = loadingMessages[currentMessageIndex]; // 새로운 문구로 업데이트
+  }, 3000); // 3초마다 문구 변경
+
   loadingInterval = setInterval(() => {
     dotCount = (dotCount + 1) % 4; // 0, 1, 2, 3으로 반복
-    loadingText.value = `로딩중입니다${'.'.repeat(dotCount)}`;
+    loadingText.value = `${loadingMessages[currentMessageIndex]}${'.'.repeat(dotCount)}`; // 점을 추가
   }, 1000); // 1초마다 실행
 };
 
@@ -84,6 +101,10 @@ const stopLoadingText = () => {
   if (loadingInterval) {
     clearInterval(loadingInterval); // setInterval 정리
     loadingInterval = null;
+  }
+  if (toggleTextInterval) {
+    clearInterval(toggleTextInterval); // 문구 변경 interval 정리
+    toggleTextInterval = null;
   }
 };
 
@@ -104,8 +125,8 @@ onMounted(() => {
     <!-- 로딩 중에 나타날 화면 -->
     <div v-if="isLoading" class="loading-overlay">
       <img :src="loadingImage" alt="Loading" />
-      <p>{{ loadingText }}</p>
-      <!-- 로딩 텍스트 출력 -->
+      <p v-html="loadingText" class="centered-text"></p>
+      <!-- HTML을 렌더링하고 중앙 정렬 -->
     </div>
 
     <div class="chat-window">
@@ -211,5 +232,13 @@ onMounted(() => {
   font-size: 18px;
   color: white;
   font-weight: bold;
+  text-align: center; /* 수평 가운데 정렬 */
+  white-space: pre-line; /* 줄바꿈을 고려하여 텍스트 처리 */
+}
+
+/* 중앙 정렬을 위한 추가 스타일 */
+.centered-text {
+  text-align: center;
+  white-space: pre-line; /* 줄바꿈을 위한 설정 */
 }
 </style>
