@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import axios from 'axios';
+import { useUserStore } from './userStore';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -19,26 +20,48 @@ export const useQuizStore = defineStore('quiz', () => {
   const successCount = ref(0);
   const currentGame = ref<Game | null>(null);
 
+  const userStore = useUserStore();
+
+  const setSuccessCount = (count: number) => {
+    successCount.value = count;
+  };
+
   const resetQuiz = () => {
     successCount.value = 0;
     currentGame.value = null;
   };
 
-  const loadGameData = async () => {
+  const startGame = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/api/games/${successCount.value + 1}`);
+      const response = await axios.post(`${BASE_URL}/api/games/start/${userStore.user?.memberId}`);
       currentGame.value = response.data;
     } catch (error) {
-      console.error('게임 데이터 불러오기 실패:', error);
+      console.error('게임 시작 실패:', error);
+      throw error;
+    }
+  };
+
+  const loadNextGame = async () => {
+    if (!currentGame.value?.gameId) return;
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/games/${currentGame.value.gameId}/next`);
+      currentGame.value = response.data;
+      successCount.value = response.data.gameRound - 1; // 게임 라운드에 따라 successCount 업데이트
+    } catch (error) {
+      console.error('다음 게임 로드 실패:', error);
       throw error;
     }
   };
 
   const submitAnswer = async (answer: string) => {
+    if (!currentGame.value?.gameId) return false;
+
     try {
-      const response = await axios.patch(`${BASE_URL}/api/games/${currentGame.value?.gameId}`, {
-        yourAnswer: answer
-      });
+      const response = await axios.post(
+        `${BASE_URL}/api/games/${currentGame.value.gameId}/submit`,
+        { yourAnswer: answer }
+      );
       currentGame.value = response.data;
 
       if (response.data.correct) {
@@ -58,8 +81,10 @@ export const useQuizStore = defineStore('quiz', () => {
     successCount,
     currentGame,
     resetQuiz,
-    loadGameData,
+    startGame,
+    loadNextGame,
     submitAnswer,
-    isQuizCompleted
+    isQuizCompleted,
+    setSuccessCount
   };
 });
