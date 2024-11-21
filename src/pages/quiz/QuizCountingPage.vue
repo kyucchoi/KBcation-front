@@ -32,14 +32,14 @@ const quizStore = useQuizStore();
 //   }, 1000);
 // });
 
-onMounted(() => {
+onMounted(async () => {
   const timer = setInterval(() => {
     if (count.value > 0) {
       count.value--;
     } else {
       clearInterval(timer);
       setTimeout(() => {
-        router.push('/quiz/4boxes');
+        router.push('/quiz1');
       }, 0);
     }
   }, 1000);

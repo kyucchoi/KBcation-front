@@ -5,13 +5,7 @@ import { useQuizStore } from '@/stores/quizStore';
 import Main from '@/components/Main.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Progress from '@/components/ui/progress/Progress.vue';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const router = useRouter();
 const quizStore = useQuizStore();
@@ -19,12 +13,14 @@ const progress = ref(100);
 const selectedAnswer = ref<string | null>(null);
 const isTimeout = ref(false);
 const showAnswerDialog = ref(false);
+const isLoading = ref(true);
 
 onMounted(async () => {
   try {
-    await quizStore.loadGameData();
+    await quizStore.startGame();
+    isLoading.value = false;
 
-    const duration = 5000;
+    const duration = 10000;
     const interval = 100;
     const step = (interval / duration) * 100;
 
@@ -41,7 +37,7 @@ onMounted(async () => {
       }
     }, interval);
   } catch (error) {
-    console.error('게임 로드 실패:', error);
+    console.error('게임 시작 실패:', error);
     router.push('/');
   }
 });
@@ -59,80 +55,92 @@ const handleAnswer = async (answer: string) => {
   }
 };
 
-const handleNextQuiz = () => {
-  if (quizStore.currentGame?.correct) {
-    if (quizStore.isQuizCompleted) {
-      router.push('/quiz/success');
-    } else {
-      router.push('/quiz/counting');
-    }
-  } else {
+const handleNextQuiz = async () => {
+  // 오답이거나 시간초과면 홈으로
+  if (!quizStore.currentGame?.correct || isTimeout.value) {
     router.push('/');
+    return;
+  }
+
+  if (quizStore.isQuizCompleted) {
+    router.push('/quiz/success');
+  } else {
+    try {
+      await quizStore.loadNextGame();
+      router.push('/quiz/counting');
+    } catch (error) {
+      console.error('다음 게임 로드 실패:', error);
+      router.push('/');
+    }
   }
 };
 </script>
 
 <template>
   <Main :padded="true" :bg-gray="true">
-    <div class="quiz-number">{{ quizStore.currentGame?.gameRound }}/3</div>
-    <div class="question">{{ quizStore.currentGame?.quiz }}</div>
-
-    <Progress v-model="progress" class="timer" />
-
-    <div class="answer-grid">
-      <Button
-        v-for="(option, index) in quizStore.currentGame?.answerOptions"
-        :key="index"
-        class="answer-button"
-        variant="whiteBlack"
-        :class="{
-          correct: selectedAnswer && option === quizStore.currentGame?.correctAnswer,
-          selected: selectedAnswer === option
-        }"
-        @click="handleAnswer(option)"
-        :disabled="selectedAnswer !== null"
-      >
-        {{ option }}
-      </Button>
+    <div v-if="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">문제를 불러오는 중...</div>
     </div>
 
-    <div v-if="selectedAnswer" class="result-section">
-      <Button
-        size="lg"
-        :variant="quizStore.currentGame?.correct ? 'default' : 'default'"
-        class="next-button"
-        @click="handleNextQuiz"
-      >
-        {{ quizStore.currentGame?.correct ? '다음 문제 도전하기' : '홈으로 돌아가기' }}
-      </Button>
+    <template v-else>
+      <div class="quiz-number">{{ quizStore.currentGame?.gameRound }}/3</div>
+      <div class="question">{{ quizStore.currentGame?.quiz }}</div>
 
-      <Button size="sm" variant="disabled" @click="showAnswerDialog = true">
-        설명 다시 보기
-      </Button>
-    </div>
-  </Main>
+      <Progress v-model="progress" class="timer" />
 
-  <Dialog v-model:open="showAnswerDialog">
-    <DialogContent class="bg-white">
-      <DialogHeader>
-        <DialogTitle class="text-lg font-semibold">
-          {{
-            isTimeout
-              ? '시간 초과되었습니다...!'
-              : quizStore.currentGame?.correct
-                ? '정답입니다!'
-                : '정답이 아닙니다...!'
-          }}
-        </DialogTitle>
-      </DialogHeader>
-      <div class="grid gap-2 py-4">
-        <div>정답: {{ quizStore.currentGame?.correctAnswer }}</div>
-        <div class="text-sm text-muted-foreground">
-          {{ quizStore.currentGame?.answerExplanation }}
-        </div>
+      <div class="answer-grid">
+        <Button
+          v-for="(option, index) in quizStore.currentGame?.answerOptions"
+          :key="index"
+          class="answer-button"
+          variant="whiteBlack"
+          :class="{
+            correct: selectedAnswer && option === quizStore.currentGame?.correctAnswer,
+            selected: selectedAnswer === option
+          }"
+          @click="handleAnswer(option)"
+          :disabled="selectedAnswer !== null || isTimeout"
+        >
+          {{ option }}
+        </Button>
       </div>
-    </DialogContent>
-  </Dialog>
+
+      <div v-if="selectedAnswer || isTimeout" class="result-section">
+        <Button size="lg" variant="default" class="next-button" @click="handleNextQuiz">
+          {{
+            quizStore.currentGame?.correct && !isTimeout ? '다음 문제 도전하기' : '홈으로 돌아가기'
+          }}
+        </Button>
+
+        <Button size="sm" variant="disabled" @click="showAnswerDialog = true">
+          설명 다시 보기
+        </Button>
+      </div>
+    </template>
+
+    <Dialog v-model:open="showAnswerDialog">
+      <DialogContent class="bg-white">
+        <DialogHeader>
+          <DialogTitle class="text-lg font-semibold">
+            {{
+              isTimeout
+                ? '시간 초과되었습니다...!'
+                : quizStore.currentGame?.correct
+                  ? '정답입니다!'
+                  : '정답이 아닙니다...!'
+            }}
+          </DialogTitle>
+        </DialogHeader>
+        <div class="grid gap-2 py-4">
+          <div>정답: {{ quizStore.currentGame?.correctAnswer }}</div>
+          <div class="text-sm text-muted-foreground">
+            {{ quizStore.currentGame?.answerExplanation }}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  </Main>
 </template>
 
 <style scoped>
@@ -178,7 +186,7 @@ const handleNextQuiz = () => {
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  padding-bottom: 80px; /* 버튼 높이 + 여유 공간 */
+  padding-bottom: 80px;
 }
 
 .correct-text {
@@ -196,8 +204,8 @@ const handleNextQuiz = () => {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 40px); /* 좌우 여백 20px씩 */
-  max-width: 560px; /* 600px - 40px */
+  width: calc(100% - 40px);
+  max-width: 560px;
   margin-top: 0;
   margin-bottom: 20px;
 }
@@ -213,6 +221,38 @@ const handleNextQuiz = () => {
     transform: translateX(-50%);
     width: calc(100% - 40px);
     border-radius: 20px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  gap: 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--css-light-yellow);
+  border-top: 4px solid var(--css-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  color: var(--dark-gray);
+  font-size: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>
