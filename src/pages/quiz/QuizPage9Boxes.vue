@@ -12,7 +12,7 @@ import {
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-const progress = ref(100); // 100%에서 시작
+const progress = ref(100);
 const isCorrect = ref(false);
 const isWrong = ref(false);
 const selectedAnswer = ref<number | null>(null);
@@ -25,7 +25,6 @@ interface Answer {
   isCorrect: boolean;
 }
 
-// 답안 배열 생성 (9개 버튼)
 const answers = ref<Answer[]>([
   { text: '김시완', isCorrect: true },
   { text: '임시완', isCorrect: false },
@@ -38,7 +37,6 @@ const answers = ref<Answer[]>([
   { text: '임시완', isCorrect: false }
 ]);
 
-// 배열을 랜덤하게 섞는 함수
 const shuffleAnswers = () => {
   const shuffled = [...answers.value];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -64,7 +62,7 @@ onMounted(() => {
         isTimeout.value = true;
         isWrong.value = true;
         selectedAnswer.value = -1;
-        showAnswerDialog.value = true; // 시간 초과시 dialog 표시
+        showAnswerDialog.value = true;
       }
     }
   }, interval);
@@ -84,17 +82,14 @@ const handleAnswer = (index: number) => {
   }
 };
 
-// 다음 퀴즈로 이동하는 함수
 const handleNextQuiz = () => {
   router.push({ path: '/quiz/counting', query: { next: 'quiz16Boxes' } });
 };
 
-// 메인으로 돌아가는 함수
 const handleGoBack = () => {
   router.push('/');
 };
 
-// 버튼 클릭 핸들러
 const handleButtonClick = () => {
   if (isCorrect.value) {
     handleNextQuiz();

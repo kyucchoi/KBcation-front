@@ -43,13 +43,13 @@ const headStyle = computed(() => ({
 
 <style scoped>
 .headbar-frame {
-  position: fixed; /* absolute에서 fixed로 변경 */
+  position: fixed;
   top: env(safe-area-inset-top); /* 노치 영역 고려 */
   left: 0;
   right: 0;
   background-color: var(--background);
   height: 52px;
-  z-index: 100; /* z-index 값 증가 */
+  z-index: 100;
   display: flex;
   align-items: end;
   padding: 0 0 8px 24px;

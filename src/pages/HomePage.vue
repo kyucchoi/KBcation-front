@@ -8,17 +8,18 @@ import { onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { useChallengeStore } from '@/stores/challengeStore';
 import TransactionList from '@/components/TransactionList.vue';
+import { useTransactionStore } from '@/stores/transactionStore';
 
 const router = useRouter();
 const themeStore = useThemeStore();
 
-const userStore = useUserStore(); // user store 사용
+const userStore = useUserStore();
 const challengeStore = useChallengeStore();
+const transactionStore = useTransactionStore();
 
-// 로그아웃 함수 추가
 const handleLogout = () => {
-  userStore.logout(); // store에서 사용자 정보 삭제
-  router.push('/login'); // 로그인 페이지로 이동
+  userStore.logout();
+  router.push('/login');
 };
 
 onMounted(async () => {
@@ -31,21 +32,34 @@ onMounted(async () => {
   // 사용자 정보 조회
   if (userStore.isLoggedIn) {
     try {
-      const userInfo = await userStore.getUserInfo();
+      await userStore.getUserInfo();
+
+      // 거래내역도 함께 로드
+      if (userStore.user?.memberId) {
+        await transactionStore.getTransactions(userStore.user.memberId);
+      }
     } catch (error) {
       console.error('사용자 정보 조회 실패:', error);
     }
   } else {
-    // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
     router.push('/login');
   }
 });
+
+const handleRefreshTransactions = async () => {
+  try {
+    if (userStore.user?.memberId) {
+      await transactionStore.updateTransactions(userStore.user.memberId, {});
+    }
+  } catch (error) {
+    console.error('거래내역 새로고침 실패:', error);
+  }
+};
 
 const handleQuizButton = () => {
   if (challengeStore.useChance()) {
     router.push('/quiz/counting');
   } else {
-    // 기회가 없을 때 처리 (예: 알림 표시)
     alert('오늘의 도전 기회를 모두 사용했습니다. 내일 다시 도전해주세요!');
   }
 };
@@ -112,7 +126,10 @@ const handleChatBot = () => {
         </div>
 
         <div>
-          <h2 class="section-title">최근 소비 내역</h2>
+          <div class="section-header">
+            <h2 class="section-title">최근 소비 내역</h2>
+            <i class="fa-solid fa-rotate-right" @click="handleRefreshTransactions"></i>
+          </div>
           <TransactionList />
 
           <!-- <div class="transaction-scroll">
@@ -272,10 +289,25 @@ const handleChatBot = () => {
   text-align: right;
 }
 
+.section-header {
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
 .section-title {
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 16px;
+  /* margin-bottom: 16px; */
+}
+
+.fa-rotate-right {
+  font-size: 18px;
+  color: var(--dark-gray);
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
 .transaction-scroll {

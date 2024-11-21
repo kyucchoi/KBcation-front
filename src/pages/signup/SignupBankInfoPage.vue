@@ -15,7 +15,7 @@ const bankInfo = computed(() => {
   return {
     bankName: decodeURIComponent(route.params.bankName as string) || '',
     bankImg: decodeURIComponent(route.params.bankImg as string) || '',
-    bankCode: (route.params.bankCode as string) || '' // bankCode 추가
+    bankCode: (route.params.bankCode as string) || ''
   };
 });
 
@@ -38,7 +38,6 @@ const thirdPartyTerms = ref(false);
 //   accountPassword.value = input.value;
 // };
 
-// 폼 유효성 검사 - 모든 필드가 입력되었는지 확인
 const isFormValid = computed(
   () =>
     accountNumber.value.trim() !== '' &&
@@ -58,7 +57,6 @@ const handleAllTermsChange = (checked: boolean) => {
   thirdPartyTerms.value = checked;
 };
 
-// 개별 약관 동의 시 전체 동의 상태 체크
 const checkAllTerms = () => {
   allTermsChecked.value = privacyTerms.value && serviceTerms.value && thirdPartyTerms.value;
 };
@@ -69,7 +67,7 @@ const handleNextButtonClick = () => {
     query: {
       bankName: bankInfo.value.bankName,
       bankImg: bankInfo.value.bankImg,
-      bankCode: bankInfo.value.bankCode, // bankCode 추가
+      bankCode: bankInfo.value.bankCode,
       accountNumber: accountNumber.value
     }
   });

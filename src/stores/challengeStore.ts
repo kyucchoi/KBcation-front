@@ -36,12 +36,9 @@ export const useChallengeStore = defineStore('challenge', () => {
     checkAndResetChances();
   };
 
-  // points는 userStore에서 가져와서 업데이트
   const addPoints = async (points: number) => {
     try {
-      // API 호출하여 포인트 업데이트
       await userStore.updatePoints(points);
-      // 사용자 정보 다시 불러오기
       await userStore.getUserInfo();
     } catch (error) {
       console.error('포인트 업데이트 실패:', error);

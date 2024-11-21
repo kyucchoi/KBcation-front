@@ -58,7 +58,7 @@ onMounted(async () => {
 // };
 
 const getRewardText = () => {
-  switch (quizStore.successCount) {
+  switch (quizStore.currentRound) {
     case 0:
       return '3단계 모두 성공하고 1,000P 받아요!';
     case 1:
