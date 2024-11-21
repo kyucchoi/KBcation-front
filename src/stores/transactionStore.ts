@@ -16,6 +16,7 @@ interface Transaction {
 export const useTransactionStore = defineStore('transaction', () => {
   const transactions = ref<Transaction[]>([]);
   const isLoading = ref(false);
+  const latestBalance = ref<number>(0);
 
   const recentTransactions = computed(() => {
     return transactions.value
@@ -39,25 +40,12 @@ export const useTransactionStore = defineStore('transaction', () => {
     }
   };
 
-  const updateTransaction = async (consumptionId: number, updatedData: Partial<Transaction>) => {
+  const getLatestBalance = async (memberId: number) => {
     try {
-      await axios.patch(`/api/consumptions/${consumptionId}`, updatedData);
-      // 수정 후 목록 다시 불러오기
-      if (transactions.value[0]?.memberId) {
-        await getTransactions(transactions.value[0].memberId);
-      }
+      const response = await axios.get(`/api/consumptions/latest-balance/${memberId}`);
+      latestBalance.value = response.data;
     } catch (error) {
-      console.error('거래내역 수정 실패:', error);
-      throw error;
-    }
-  };
-
-  const updateTransactions = async (memberId: number, updatedData: any) => {
-    try {
-      await axios.post(`/api/transactions/update/${memberId}`, updatedData);
-      await getTransactions(memberId);
-    } catch (error) {
-      console.error('거래내역 일괄 업데이트 실패:', error);
+      console.error('최신 잔액 조회 실패:', error);
       throw error;
     }
   };
@@ -65,9 +53,9 @@ export const useTransactionStore = defineStore('transaction', () => {
   return {
     transactions,
     recentTransactions,
+    latestBalance,
     isLoading,
     getTransactions,
-    updateTransaction,
-    updateTransactions
+    getLatestBalance
   };
 });
