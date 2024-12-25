@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuizStore } from '@/stores/quizStore';
 import Main from '@/components/Main.vue';
@@ -15,7 +15,29 @@ const isTimeout = ref(false);
 const showAnswerDialog = ref(false);
 const isLoading = ref(true);
 
+// 드래그 및 더블클릭 방지
+const preventDefaultEvents = () => {
+  document.addEventListener('dragstart', (e) => e.preventDefault());
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+  document.addEventListener('dblclick', (e) => e.preventDefault());
+};
+
+// 터치/마우스 이벤트 중복 방지를 위한 debounce
+let lastTapTime = 0;
+const handleTouchStart = (e: TouchEvent) => {
+  const currentTime = new Date().getTime();
+  const tapDiff = currentTime - lastTapTime;
+  if (tapDiff < 300) {
+    // 더블 탭 방지
+    e.preventDefault();
+  }
+  lastTapTime = currentTime;
+};
+
 onMounted(async () => {
+  preventDefaultEvents();
+  document.addEventListener('touchstart', handleTouchStart);
+
   try {
     await quizStore.startGame();
     isLoading.value = false;
@@ -42,16 +64,26 @@ onMounted(async () => {
   }
 });
 
+onUnmounted(() => {
+  document.removeEventListener('touchstart', handleTouchStart);
+});
+
+// 답안 제출 처리에 debounce 적용
+let isSubmitting = false;
 const handleAnswer = async (answer: string) => {
-  if (!isTimeout.value && !selectedAnswer.value) {
-    selectedAnswer.value = answer;
-    try {
-      const isCorrect = await quizStore.submitAnswer(answer);
-      showAnswerDialog.value = true;
-    } catch (error) {
-      console.error('답안 제출 실패:', error);
-      router.push('/');
-    }
+  if (isSubmitting || isTimeout.value || selectedAnswer.value) return;
+
+  isSubmitting = true;
+  selectedAnswer.value = answer;
+
+  try {
+    const isCorrect = await quizStore.submitAnswer(answer);
+    showAnswerDialog.value = true;
+  } catch (error) {
+    console.error('답안 제출 실패:', error);
+    router.push('/');
+  } finally {
+    isSubmitting = false;
   }
 };
 
@@ -171,6 +203,7 @@ const handleNextQuiz = async () => {
 .answer-button {
   height: 140px;
   font-size: 20px;
+  touch-action: manipulation; /* 더블탭 줌 방지 */
 }
 
 .correct {
