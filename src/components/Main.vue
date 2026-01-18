@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import { useThemeStore } from '@/stores/theme';
 
 const props = defineProps({
@@ -37,15 +37,11 @@ const mainStyle = computed(() => ({
 <style scoped>
 .main-frame {
   background-color: var(--background);
-  position: fixed;
   width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
   overflow-x: hidden;
-  overflow-y: scroll;
-  overscroll-behavior: none;
-  touch-action: pan-y pinch-zoom;
+  box-sizing: border-box;
 }
-
-/* .padded {
-  padding: 0px 5.13%;
-} */
 </style>

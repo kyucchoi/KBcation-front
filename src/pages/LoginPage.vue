@@ -98,7 +98,6 @@ const handleLogin = async () => {
 <style scoped>
 .login-wrapper {
   min-height: 88vh;
-  /* background: linear-gradient(to bottom, #fff6d3, white); */
   display: flex;
   align-items: center;
   justify-content: center;
